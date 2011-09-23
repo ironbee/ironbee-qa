@@ -1,0 +1,38 @@
+# This Tool requires:
+# PyNIDS: http://jon.oberheide.org/pynids/ 
+# and
+# Scapy: http://www.secdev.org/projects/scapy/
+# This QA tool probably needs some QA love, the http parser is far from perfect
+#
+
+#If using scapy you have to sudo 
+#Ivan's Evasion test
+sudo python ./ironbee_test.py --file-glob="/home/coz/evasion/path-33-u-fullwidth-mapping.t" --host="172.18.100.105" --port=80 --file-format="iristic_evasion"
+
+#IronBee audit log format
+sudo python ./ironbee_test.py --file-glob="ironbee-audit.log.sample" --host="172.18.100.105" --port=80 --file-format="ironbee_audit_log"
+
+#PCAP format
+python ./ironbee_test.py --file-glob="/home/coz/sandnet.pcap" --host="172.18.100.105" --port=80 --file-format="pcap" --pcap-bpf="tcp and port 80"
+
+#Nikto DB format
+python ./ironbee_test.py --file-glob="/home/coz/db_tests" --host="172.18.100.105" --port=80 --file-format="nikto2_db" --nikto2-vars-file="/home/coz/db_variables"
+
+#One Shot
+python ./ironbee_test.py  --one-shot="GET / HTTP/1.1\r\nHost: foo\r\n\r\n" --host="172.18.100.105" --port=80
+
+#One Shot with local apache server
+./ironbee_test.py  --local-apache --one-shot="GET /index.html HTTP/1.1\r\nHost: foo\r\n\r\n"
+
+#One Shot test of apache without IronBee
+./ironbee_test.py --local-apache --apache-vars="@APACHE_HTTPD_CONF_TEMPLATE@:@CWD@/server_root/conf/httpd.noironbee.conf.in" --one-shot="GET / HTTP/1.0\r\n\r\n"
+
+#IronBee JSON test file format
+./ironbee_test.py --console-log-level="error" --local-apache --file-glob="tests/*.json" --file-format="ironbee_test_file"
+
+#Read PCAP and print RAW requests
+./ironbee_test.py --file-glob=/home/coz/sqlmap.pcap --console-log-level=error --file-format=pcap2raw --no-normalize
+
+#Judy Evasions
+sudo ./ironbee_test.py  --one-shot="GET / HTTP/1.1\r\nHost: smart.people.on.ice\r\n\r\n" --host="172.18.101.100" --port=80 --send-mode="jnovak_send_rst_bad_chksum"
+

@@ -1,0 +1,6 @@
+Support matching of at least http response status from IronBee audit logs and from PCAPS.
+Add support for parsing pipe-lined HTTP request/responses.
+Add in additional TCP and IP evasion tests.
+Create HTML and text based reports.
+Add support for parsing various proxy logs like webscarab, paros, etc.
+Add SSL/TLS support

@@ -1,0 +1,105 @@
+
+This is a multi-part message in MIME format.
+
+
+--2a244ffc-4d7f90f4-dec4-40c8-8fff-410d01234567
+Content-Disposition: audit-log-part; name="header"
+Content-Transfer-Encoding: binary
+Content-Type: application/json
+
+{
+  "log-timestamp":  "2011-03-15T09:16:52.1327-0700",
+  "log-format":  "http-message/1",
+  "log-id":  "2a244ffc-4d7f90f4-dec4-40c8-8fff-410d01234567",
+  "sensor-id":  "SensorId",
+  "sensor-version":  "IronBee/0.2.0 (embedded; PluginName/1.2.3)",
+  "sensor-hostname":  "sensor.hostname.com"
+}
+--2a244ffc-4d7f90f4-dec4-40c8-8fff-410d01234567
+Content-Disposition: audit-log-part; name="events"
+Content-Transfer-Encoding: binary
+Content-Type: application/json
+
+{
+  "events": [
+    {
+      "event-id": 4093771662,
+      "rule-id": "-",
+      "publisher": "-",
+      "source": "-",
+      "source-version": "-",
+      "type": "-",
+      "activity": "-",
+      "class": "-/-",
+      "confidence": 0,
+      "severity": 0,
+      "sys-env": "-",
+      "rec-action": "-",
+      "tags": [],
+      "fields": [],
+      "msg": "[TEST Event] Request Line matches: (?i:foo)",
+      "data": ""
+    }
+  ]
+}
+--2a244ffc-4d7f90f4-dec4-40c8-8fff-410d01234567
+Content-Disposition: audit-log-part; name="http-request-metadata"
+Content-Transfer-Encoding: binary
+Content-Type: application/json
+
+{
+  "request-timestamp":  "2011-03-15T09:16:52.1271-0700",
+  "message-id":  "4d7f90f4-dec4-40c8-8fff-410d01234567",
+  "message-num": 1,
+  "remote-addr":  "127.0.1.1",
+  "remote-port": 44553,
+  "local-addr":  "127.0.1.1",
+  "local-port": 80,
+  "request-uri":  "/",
+  "request_protocol":  "HTTP/1.1",
+  "request_method":  "GET",
+  "request-hostname":  "red-dwarf"
+}
+--2a244ffc-4d7f90f4-dec4-40c8-8fff-410d01234567
+Content-Disposition: audit-log-part; name="http-response-metadata"
+Content-Transfer-Encoding: binary
+Content-Type: application/json
+
+{
+  "response-timestamp":  "2011-03-15T09:16:52.1316-0700",
+  "response_status":  "200",
+  "response_protocol":  "HTTP/1.1"
+}
+--2a244ffc-4d7f90f4-dec4-40c8-8fff-410d01234567
+Content-Disposition: audit-log-part; name="http-request-headers"
+Content-Transfer-Encoding: binary
+Content-Type: application/octet-stream
+
+GET /?foo=12345 HTTP/1.1
+Host: red-dwarf
+User-Agent: Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.15) Gecko/20110303 Firefox/3.6.15
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-us,en;q=0.5
+Accept-Encoding: gzip,deflate
+Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7
+Keep-Alive: 115
+Connection: keep-alive
+Pragma: no-cache
+
+--2a244ffc-4d7f90f4-dec4-40c8-8fff-410d01234567
+Content-Disposition: audit-log-part; name="http-response-headers"
+Content-Transfer-Encoding: binary
+Content-Type: application/octet-stream
+
+HTTP/1.1 200 OK
+Date: Tue, 15 Mar 2011 16:16:52 GMT
+Server: Apache/2.2.16 (Ubuntu)
+Last-Modified: Thu, 22 Jul 2010 05:39:59 GMT
+ETag: "a01918-b1-48bf3595fdbf1"
+Accept-Ranges: bytes
+Content-Length: 177
+Keep-Alive: timeout=10, max=100
+Connection: Keep-Alive
+
+--2a244ffc-4d7f90f4-dec4-40c8-8fff-410d01234567--
+

@@ -1,0 +1,37 @@
+### Base configuration for starting Apache httpd
+
+# File locations
+PidFile @IRONBEE_LOGS_DIR@/httpd.pid
+ScoreBoardFile @IRONBEE_LOGS_DIR@/httpd.scoreboard
+
+<IfModule !mod_proxy.c>
+	LoadModule proxy_module @APXS_LIBEXECDIR@/mod_proxy.so
+	LoadModule proxy_http_module @APXS_LIBEXECDIR@/mod_proxy_http.so
+</IfModule>
+<IfModule !mod_unique_id.c>
+	LoadModule unique_id_module @APXS_LIBEXECDIR@/mod_unique_id.so
+</IfModule>
+
+# TODO: Need to have these configurable
+LoadFile /usr/lib/libxml2.so
+LoadFile /usr/local/lib/libhtp.so
+
+ServerName localhost
+
+CoreDumpDirectory @IRONBEE_SERVERROOT_DIR@/tmp
+
+LogFormat "%v:%p %h %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\"" vhost_combined
+LogFormat "%h %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\"" combined
+LogFormat "%h %l %u %t \"%r\" %>s %O" common
+LogFormat "%{Referer}i -> %U" referer
+LogFormat "%{User-agent}i" agent
+
+LogLevel debug
+ErrorLog @IRONBEE_LOGS_DIR@/error.log
+CustomLog @IRONBEE_LOGS_DIR@/access.log combined
+
+DocumentRoot @IRONBEE_DOCROOT_DIR@
+<Directory "@IRONBEE_DOCROOT_DIR@">
+	Options Indexes FollowSymLinks
+	AllowOverride None
+</Directory>

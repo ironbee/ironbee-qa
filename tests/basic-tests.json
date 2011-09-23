@@ -1,0 +1,1076 @@
+{
+    "test1": {
+        "description": "Simple HTTP 1.0 request for /", 
+        "enabled": "True",
+        "local_apache":{},
+        "matches": {
+            "file_matches": {
+                "server_root/logs/audit/auditlog.log": {
+                    "format" : "ironbee_audit_log_index",
+                    "simple": [
+                        "\"request_method\": \"GET\"",
+                        "\"request_protocol\": \"HTTP/1.0",
+                        "\"request-uri-path\": \"/\""
+                    ]
+                }
+            }
+        },
+        "raw_request": "GET / HTTP/1.0\r\n\r\n"
+    },
+    "test2": {
+        "description": "Simple HTTP 1.1 request for /",
+        "enabled": "True",
+        "local_apache":{},
+        "matches": {
+            "file_matches": {
+                "server_root/logs/audit/auditlog.log": {
+                    "format" : "ironbee_audit_log_index",
+                    "simple": [
+                        "\"request_method\": \"GET\"",
+                        "\"request_protocol\": \"HTTP/1.1",
+                        "\"request-uri-path\": \"/\"",
+                        "User-Agent: test2"
+                    ]
+                }
+            }
+        },
+        "raw_request": "GET / HTTP/1.1\r\nHost: blah\r\nUser-Agent: test2\r\n\r\n"
+    },
+    "test3": {
+        "description": "Simple HTTP 1.1 request for / method of PORKCHOPEXPRESS",
+        "enabled": "True",
+        "local_apache":{},
+        "matches": {
+            "file_matches": {
+                "server_root/logs/audit/auditlog.log": {
+                    "format" : "ironbee_audit_log_index",
+                    "simple": [
+                        "\"request_method\": \"PORKCHOPEXPRESS\"",
+                        "\"request_protocol\": \"HTTP/1.1",
+                        "\"request-uri-path\": \"/\"",
+                        "User-Agent: test3"
+                    ]
+                }
+            }
+        },
+        "raw_request": "PORKCHOPEXPRESS / HTTP/1.1\r\nHost: blah\r\nUser-Agent: test3\r\n\r\n"
+    },
+    "test4": {
+        "description": "Simple HTTP 1.1 request for / tabs for spaces request line",
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{},
+        "matches": {
+            "file_matches": {
+                "server_root/logs/audit/auditlog.log": {
+                    "format" : "ironbee_audit_log_index",
+                    "simple": [
+                        "\"request_method\": \"GET\"",
+                        "\"request_protocol\": \"HTTP/1.1",
+                        "\"request-uri-path\": \"/\"",
+                        "User-Agent: test4"
+                    ]
+                }
+            }
+        },
+        "raw_request": "GET\t/\tHTTP/1.1\r\nHost: blah\r\nUser-Agent: test4\r\n\r\n"
+    },
+    "test5": {
+        "description": "Simple HTTP 1.1 request for / vertical tabs for spaces request line",
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{},
+        "matches": {
+            "file_matches": {
+                "server_root/logs/audit/auditlog.log": {
+                    "format" : "ironbee_audit_log_index",
+                    "simple": [
+                        "\"request_method\": \"GET\"",
+                        "\"request_protocol\": \"HTTP/1.1",
+                        "\"request-uri-path\": \"/\"",
+                        "User-Agent: test5"
+                    ]
+                }
+            }
+        },
+        "raw_request": "GET\\v/\\vHTTP/1.1\r\nHost: blah\r\nUser-Agent: test5\r\n\r\n"
+    },
+    "test6": {
+        "description": "Test of SensorId Directive",
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{
+            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test6.in"
+        },    
+        "matches": {
+            "file_matches": {
+                "server_root/logs/audit/auditlog.log": {
+                    "format" : "ironbee_audit_log_index",
+                    "re": [
+                        "(?sm)^\\s*\\\"log-id\\\"\\:.+98763000\\\"\\,\\s*$"
+                    ]
+                }
+            }
+        },
+        "raw_request": "GET / HTTP/1.1\r\nHost: foo\r\n\r\n"
+    },
+    "test7": {
+        "description": "Test of SensorName Directive",
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{
+            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test7.in"
+        },    
+        "matches": {
+            "file_matches": {
+                "server_root/logs/audit/auditlog.log": {
+                    "format" : "ironbee_audit_log_index",
+                    "simple": [
+                        "\"sensor-name\": \"Trinity\""
+                    ]
+                }
+            }
+        },
+        "raw_request": "GET / HTTP/1.1\r\nHost: foo\r\n\r\n"
+    },
+    "test8": {
+        "description": "Test of SensorHostname Directive",
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{
+            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test8.in"
+        },    
+        "matches": {
+            "file_matches": {
+                "server_root/logs/audit/auditlog.log": {
+                    "format" : "ironbee_audit_log_index",
+                    "simple": [
+                        "\"sensor-hostname\": \"operation.crossroads.baker\""
+                    ]
+                }
+            }
+        },
+        "raw_request": "GET / HTTP/1.1\r\nHost: foo\r\n\r\n"
+    },
+    "test9": {
+        "description": "Test of DebugLogLevel 0 Directive",
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{
+            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test9.in"
+        },    
+        "matches": {
+            "file_matches": {
+                "server_root/logs/error.log": {
+                    "format" : "text",
+                    "re": [
+                        "(?sm)^.+\\[emerg\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s0"
+                    ],
+                    "re_negated": [
+                        "\\sTestLogLevel\\s[1-9]"
+                    ]
+                }
+            }
+        },
+        "raw_request": "GET / HTTP/1.1\r\nHost: foo\r\n\r\n"
+    },
+    "test10": {
+        "description": "Test of DebugLogLevel 1 Directive",
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{
+            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test10.in"
+        },
+        "matches": {
+            "file_matches": {
+                "server_root/logs/error.log": {
+                    "format" : "text",
+                    "re": [
+                        "(?sm)^.+\\[emerg\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s0",
+                        "(?sm)^.+\\[alert\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s1"
+                    ],
+                    "re_negated": [
+                        "\\sTestLogLevel\\s[2-9]"
+                    ]
+
+                }
+            }
+        },
+        "raw_request": "GET / HTTP/1.1\r\nHost: foo\r\n\r\n"
+    },
+    "test11": {
+        "description": "Test of DebugLogLevel 2 Directive",
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{
+            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test11.in"
+        },
+        "matches": {
+            "file_matches": {
+                "server_root/logs/error.log": {
+                    "format" : "text",
+                    "re": [
+                        "(?sm)^.+\\[emerg\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s0",
+                        "(?sm)^.+\\[alert\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s1",
+                        "(?sm)^.+\\[error\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s2"
+                    ],
+                    "re_negated": [
+                        "\\sTestLogLevel\\s[3-9]"
+                    ]
+                }
+            }
+        },
+        "raw_request": "GET / HTTP/1.1\r\nHost: foo\r\n\r\n"
+    },
+    "test12": {
+        "description": "Test of DebugLogLevel 3 Directive",
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{
+            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test12.in"
+        },
+        "matches": {
+            "file_matches": {
+                "server_root/logs/error.log": {
+                    "format" : "text",
+                    "re": [
+                        "(?sm)^.+\\[emerg\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s0",
+                        "(?sm)^.+\\[alert\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s1",
+                        "(?sm)^.+\\[error\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s2",
+                        "(?sm)^.+\\[warn\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s3"
+                    ],
+                    "re_negated": [
+                        "\\sTestLogLevel\\s[4-9]"
+                    ]
+
+                }
+            }
+        },
+        "raw_request": "GET / HTTP/1.1\r\nHost: foo\r\n\r\n"
+    },
+    "test13": {
+        "description": "Test of DebugLogLevel 4 Directive",
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{
+            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test13.in"
+        },
+        "matches": {
+            "file_matches": {
+                "server_root/logs/error.log": {
+                    "format" : "text",
+                    "re": [
+                        "(?sm)^.+\\[emerg\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s0",
+                        "(?sm)^.+\\[alert\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s1",
+                        "(?sm)^.+\\[error\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s2",
+                        "(?sm)^.+\\[warn\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s3",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s4"
+                    ],
+                    "re_negated": [
+                        "\\sTestLogLevel\\s[5-9]"
+                    ]
+
+                }
+            }
+        },
+        "raw_request": "GET / HTTP/1.1\r\nHost: foo\r\n\r\n"
+    },
+    "test14": {
+        "description": "Test of DebugLogLevel 5 Directive",
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{
+            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test14.in"
+        },
+        "matches": {
+            "file_matches": {
+                "server_root/logs/error.log": {
+                    "format" : "text",
+                    "re": [
+                        "(?sm)^.+\\[emerg\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s0",
+                        "(?sm)^.+\\[alert\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s1",
+                        "(?sm)^.+\\[error\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s2",
+                        "(?sm)^.+\\[warn\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s3",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s4",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s5"
+                    ],
+                    "re_negated": [
+                        "\\sTestLogLevel\\s[6-9]"
+                    ]
+
+                }
+            }
+        },
+        "raw_request": "GET / HTTP/1.1\r\nHost: foo\r\n\r\n"
+    },
+    "test15": {
+        "description": "Test of DebugLogLevel 6 Directive",
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{
+            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test15.in"
+        },
+        "matches": {
+            "file_matches": {
+                "server_root/logs/error.log": {
+                    "format" : "text",
+                    "re": [
+                        "(?sm)^.+\\[emerg\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s0",
+                        "(?sm)^.+\\[alert\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s1",
+                        "(?sm)^.+\\[error\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s2",
+                        "(?sm)^.+\\[warn\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s3",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s4",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s5",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s6"
+                    ],
+                    "re_negated": [
+                        "\\sTestLogLevel\\s[7-9]"
+                    ]
+
+                }
+            }
+        },
+        "raw_request": "GET / HTTP/1.1\r\nHost: foo\r\n\r\n"
+    },
+    "test16": {
+        "description": "Test of DebugLogLevel 7 Directive",
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{
+            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test16.in"
+        },
+        "matches": {
+            "file_matches": {
+                "server_root/logs/error.log": {
+                    "format" : "text",
+                    "re": [
+                        "(?sm)^.+\\[emerg\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s0",
+                        "(?sm)^.+\\[alert\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s1",
+                        "(?sm)^.+\\[error\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s2",
+                        "(?sm)^.+\\[warn\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s3",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s4",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s5",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s6",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s7"
+                    ],
+                    "re_negated": [
+                        "\\sTestLogLevel\\s[8-9]"
+                    ]
+
+                }
+            }
+        },
+        "raw_request": "GET / HTTP/1.1\r\nHost: foo\r\n\r\n"
+    },
+    "test17": {
+        "description": "Test of DebugLogLevel 8 Directive",
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{
+            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test17.in"
+        },
+        "matches": {
+            "file_matches": {
+                "server_root/logs/error.log": {
+                    "format" : "text",
+                    "re": [
+                        "(?sm)^.+\\[emerg\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s0",
+                        "(?sm)^.+\\[alert\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s1",
+                        "(?sm)^.+\\[error\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s2",
+                        "(?sm)^.+\\[warn\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s3",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s4",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s5",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s6",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s7",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s8"
+                    ],
+                    "re_negated": [
+                        "\\sTestLogLevel\\s9"
+                    ]
+
+                }
+            }
+        },
+        "raw_request": "GET / HTTP/1.1\r\nHost: foo\r\n\r\n"
+    },
+    "test18": {
+        "description": "Test of DebugLogLevel 9 Directive",
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{
+            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test18.in"
+        },
+        "matches": {
+            "file_matches": {
+                "server_root/logs/error.log": {
+                    "format" : "text",
+                    "re": [
+                        "(?sm)^.+\\[emerg\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s0",
+                        "(?sm)^.+\\[alert\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s1",
+                        "(?sm)^.+\\[error\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s2",
+                        "(?sm)^.+\\[warn\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s3",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s4",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s5",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s6",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s7",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s8",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s9"
+                    ]
+                }
+            }
+        },
+        "raw_request": "GET / HTTP/1.1\r\nHost: foo\r\n\r\n"
+    },
+    "test19": {
+        "description": "Test of DebugLogLevel Default",
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{
+            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test19.in"
+        },
+        "matches": {
+            "file_matches": {
+                "server_root/logs/error.log": {
+                    "format" : "text",
+                    "re": [
+                        "(?sm)^.+\\[emerg\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s0",
+                        "(?sm)^.+\\[alert\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s1",
+                        "(?sm)^.+\\[error\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s2",
+                        "(?sm)^.+\\[warn\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s3",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s4"
+                    ],
+                    "re_negated": [
+                        "\\sTestLogLevel\\s[5-9]"
+                    ]
+
+                }
+            }
+        },
+        "raw_request": "GET / HTTP/1.1\r\nHost: foo\r\n\r\n"
+    },
+    "test20": {
+        "description": "Test of LoadModule Nonexistent",
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{
+            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test20.in"
+        },
+        "matches": {
+            "file_matches": {
+                "server_root/logs/error.log": {
+                    "format" : "text",
+                     "simple" : [
+                         "[error] IronBee: ERROR - Failed to load module \"Abel.so\""
+                     ]
+                }
+            }
+        },
+        "raw_request": "GET / HTTP/1.1\r\nHost: foo\r\n\r\n"
+    },
+
+    "test21": {
+        "description": "TRACE request for /index.html",
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{},
+        "matches": {
+            "file_matches": {
+                "server_root/logs/audit/auditlog.log": {
+                    "format" : "ironbee_audit_log_index",
+                    "simple": [
+                        "\"request_method\": \"TRACE\"",
+                        "\"request_protocol\": \"HTTP/1.1",
+                        "\"request-uri-path\": \"/index.html\"",
+                        "Content-Type: message/http"
+                    ]
+                }
+            }
+        },
+        "raw_request": "TRACE /index.html HTTP/1.1\r\nHost: foo\r\n\r\n"
+    },
+    "test22": {
+        "description": "OPTIONS request for /index.html",
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{},
+        "matches": {
+            "file_matches": {
+                "server_root/logs/audit/auditlog.log": {
+                    "format" : "ironbee_audit_log_index",
+                    "simple": [
+                        "\"request_method\": \"OPTIONS\"",
+                        "\"request_protocol\": \"HTTP/1.1",
+                        "\"request-uri-path\": \"/index.html\"",
+                        "Allow: "
+                    ]
+                }
+            }
+        },
+        "raw_request": "OPTIONS /index.html HTTP/1.1\r\nHost: foo\r\n\r\n"
+    },
+    "test23": {
+        "description": "HEAD request for /index.html",
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{},
+        "matches": {
+            "file_matches": {
+                "server_root/logs/audit/auditlog.log": {
+                    "format" : "ironbee_audit_log_index",
+                    "simple": [
+                        "\"request_method\": \"HEAD\"",
+                        "\"request_protocol\": \"HTTP/1.1",
+                        "\"request-uri-path\": \"/index.html\""
+                    ]
+                }
+            }
+        },
+        "raw_request": "HEAD /index.html HTTP/1.1\r\nHost: foo\r\n\r\n"
+    },
+    "test24": {
+        "description": "POST request for /index.html",
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{},
+        "matches": {
+            "file_matches": {
+                "server_root/logs/audit/auditlog.log": {
+                    "format" : "ironbee_audit_log_index",
+                    "simple": [
+                        "\"request_method\": \"POST\"",
+                        "\"request_protocol\": \"HTTP/1.1",
+                        "\"request-uri-path\": \"/index.html\""
+                    ]
+                }
+            }
+        },
+        "raw_request": "POST /index.html HTTP/1.1\r\nHost: foo\r\n\r\nblah"
+    },
+    "test25": {
+        "description": "Test of AuditLogParts invalid AggievillePBR (minimal)",
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{
+            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test25.in"
+        },
+        "matches": {
+            "file_matches": {
+                    "server_root/logs/error.log": {
+                    "format" : "text",
+                    "simple": [
+                        "IronBee: ERROR - Invalid AuditLogParts option: AggievillePBR"
+                    ]
+                }
+            }
+        },
+        "raw_request": "GET / HTTP/1.1\r\nHost: foo\r\n\r\n"
+    },
+    "test26": {
+        "description": "Test of AuditLogParts minimal (header and events only)",
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{
+            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test26.in"
+        },
+        "matches": {
+            "file_matches": {
+                    "server_root/logs/audit/auditlog.log": {
+                    "format" : "ironbee_audit_log_index",
+                    "simple": [
+                        "Content-Disposition: audit-log-part; name=\"header\"",
+                        "Content-Disposition: audit-log-part; name=\"events\""
+                    ],
+                    "re_negated": [
+                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!(header|events))"
+                    ]
+                }
+            }
+        },
+        "raw_request": "GET / HTTP/1.1\r\nHost: foo\r\n\r\n"
+    },
+    "test27": {
+        "description": "Test of AuditLogParts minimal (header and events only) +request",
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{
+            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test27.in"
+        },
+        "matches": {
+            "file_matches": {
+                    "server_root/logs/audit/auditlog.log": {
+                    "format" : "ironbee_audit_log_index",
+                    "simple": [
+                        "Content-Disposition: audit-log-part; name=\"header\"",
+                        "Content-Disposition: audit-log-part; name=\"events\"",
+                        "Content-Disposition: audit-log-part; name=\"http-request-metadata\"",
+                        "Content-Disposition: audit-log-part; name=\"http-request-headers\""
+                    ],
+                    "re_negated": [
+                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!(header|events|http-request-metadata|http-request-headers))"
+                    ]
+
+                }
+            }
+        },
+        "raw_request": "POST / HTTP/1.1\r\nHost: foo\r\n\r\nblah=blue"
+    },
+    "test28": {
+        "description": "Test of AuditLogParts minimal (header and events only) +request -requestMetadata",
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{
+            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test28.in"
+        },
+        "matches": {
+            "file_matches": {
+                    "server_root/logs/audit/auditlog.log": {
+                    "format" : "ironbee_audit_log_index",
+                    "simple": [
+                        "Content-Disposition: audit-log-part; name=\"header\"",
+                        "Content-Disposition: audit-log-part; name=\"events\"",
+                        "Content-Disposition: audit-log-part; name=\"http-request-headers\""
+                    ],
+                    "re_negated": [
+                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!(header|events|http-request-headers))"
+                    ]
+
+                }
+            }
+        },
+        "raw_request": "GET / HTTP/1.1\r\nHost: foo\r\n\r\n"
+    },
+    "test29": {
+        "description": "Test of AuditLogParts minimal (header and events only) +request -requestHeaders",
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{
+            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test29.in"
+        },
+        "matches": {
+            "file_matches": {
+                    "server_root/logs/audit/auditlog.log": {
+                    "format" : "ironbee_audit_log_index",
+                    "simple": [
+                        "Content-Disposition: audit-log-part; name=\"header\"",
+                        "Content-Disposition: audit-log-part; name=\"events\"",
+                        "Content-Disposition: audit-log-part; name=\"http-request-metadata\""
+                    ],
+                    "re_negated": [
+                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!(header|events|http-request-metadata))"
+                    ]
+
+                }
+            }
+        },
+        "raw_request": "GET / HTTP/1.1\r\nHost: foo\r\n\r\n"
+    },
+    "test30": {
+        "description": "Test of AuditLogParts minimal (header and events only) +response",
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{
+            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test30.in"
+        },
+        "matches": {
+            "file_matches": {
+                    "server_root/logs/audit/auditlog.log": {
+                    "format" : "ironbee_audit_log_index",
+                    "simple": [
+                        "Content-Disposition: audit-log-part; name=\"header\"",
+                        "Content-Disposition: audit-log-part; name=\"events\"",
+                        "Content-Disposition: audit-log-part; name=\"http-response-metadata\"",
+                        "Content-Disposition: audit-log-part; name=\"http-response-headers\""
+                    ],
+                    "re_negated": [
+                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!(header|events|http-response-metadata|http-response-headers))"
+                    ]
+
+                }
+            }
+        },
+        "raw_request": "GET / HTTP/1.1\r\nHost: foo\r\n\r\n"
+    },
+    "test31": {
+        "description": "Test of AuditLogParts minimal (header and events only) +response -responseMetadata",
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{
+            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test31.in"
+        },
+        "matches": {
+            "file_matches": {
+                    "server_root/logs/audit/auditlog.log": {
+                    "format" : "ironbee_audit_log_index",
+                    "simple": [
+                        "Content-Disposition: audit-log-part; name=\"header\"",
+                        "Content-Disposition: audit-log-part; name=\"events\"",
+                        "Content-Disposition: audit-log-part; name=\"http-response-headers\""
+                    ],
+                    "re_negated": [
+                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!(header|events|http-response-headers))"
+                    ]
+
+                }
+            }
+        },
+        "raw_request": "GET / HTTP/1.1\r\nHost: foo\r\n\r\n"
+    },
+    "test32": {
+        "description": "Test of AuditLogParts minimal (header and events only) +response -responseHeaders",
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{
+            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test32.in"
+        },
+        "matches": {
+            "file_matches": {
+                    "server_root/logs/audit/auditlog.log": {
+                    "format" : "ironbee_audit_log_index",
+                    "simple": [
+                        "Content-Disposition: audit-log-part; name=\"header\"",
+                        "Content-Disposition: audit-log-part; name=\"events\"",
+                        "Content-Disposition: audit-log-part; name=\"http-response-metadata\""
+                    ],
+                    "re_negated": [
+                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!(header|events|http-response-metadata))"
+                    ]
+
+                }
+            }
+        },
+        "raw_request": "GET / HTTP/1.1\r\nHost: foo\r\n\r\n"
+    },
+    "test33": {
+        "description": "Test of AuditLogParts minimal (header and events only) +response +requestHeaders",
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{
+            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test33.in"
+        },
+        "matches": {
+            "file_matches": {
+                    "server_root/logs/audit/auditlog.log": {
+                    "format" : "ironbee_audit_log_index",
+                    "simple": [
+                        "Content-Disposition: audit-log-part; name=\"header\"",
+                        "Content-Disposition: audit-log-part; name=\"events\"",
+                        "Content-Disposition: audit-log-part; name=\"http-response-headers\"",
+                        "Content-Disposition: audit-log-part; name=\"http-response-metadata\"",
+                        "Content-Disposition: audit-log-part; name=\"http-request-headers\""
+                    ],
+                    "re_negated": [
+                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!(header|events|http-response-metadata|http-response-headers|http-request-headers))"
+                    ]
+
+                }
+            }
+        },
+        "raw_request": "GET / HTTP/1.1\r\nHost: foo\r\n\r\n"
+    },
+    "test34": {
+        "description": "Test of AuditLogParts minimal (header and events only) +response +requestMetadata",
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{
+            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test34.in"
+        },
+        "matches": {
+            "file_matches": {
+                    "server_root/logs/audit/auditlog.log": {
+                    "format" : "ironbee_audit_log_index",
+                    "simple": [
+                        "Content-Disposition: audit-log-part; name=\"header\"",
+                        "Content-Disposition: audit-log-part; name=\"events\"",
+                        "Content-Disposition: audit-log-part; name=\"http-response-headers\"",
+                        "Content-Disposition: audit-log-part; name=\"http-response-metadata\"",
+                        "Content-Disposition: audit-log-part; name=\"http-request-metadata\""
+                    ],
+                    "re_negated": [
+                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!(header|events|http-response-metadata|http-response-headers|http-request-metadata))"
+                    ]
+
+                }
+            }
+        },
+        "raw_request": "GET / HTTP/1.1\r\nHost: foo\r\n\r\n"
+    },
+    "test35": {
+        "description": "Test of AuditLogParts minimal (header and events only) +response -responseMetadata",
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{
+            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test35.in"
+        },
+        "matches": {
+            "file_matches": {
+                    "server_root/logs/audit/auditlog.log": {
+                    "format" : "ironbee_audit_log_index",
+                    "simple": [
+                        "Content-Disposition: audit-log-part; name=\"header\"",
+                        "Content-Disposition: audit-log-part; name=\"events\"",
+                        "Content-Disposition: audit-log-part; name=\"http-response-headers\""
+                    ],
+                    "re_negated": [
+                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!(header|events|http-response-headers))"
+                    ]
+
+                }
+            }
+        },
+        "raw_request": "GET / HTTP/1.1\r\nHost: foo\r\n\r\n"
+    },
+    "test36": {
+        "description": "Test of AuditLogParts minimal (header and events only) +response -responseHeaders",
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{
+            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test36.in"
+        },
+        "matches": {
+            "file_matches": {
+                    "server_root/logs/audit/auditlog.log": {
+                    "format" : "ironbee_audit_log_index",
+                    "simple": [
+                        "Content-Disposition: audit-log-part; name=\"header\"",
+                        "Content-Disposition: audit-log-part; name=\"events\"",
+                        "Content-Disposition: audit-log-part; name=\"http-response-metadata\""
+                    ],
+                    "re_negated": [
+                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!(header|events|http-response-metadata))"
+                    ]
+
+                }
+            }
+        },
+        "raw_request": "GET / HTTP/1.1\r\nHost: foo\r\n\r\n"
+    },
+    "test37": {
+        "description": "Test of AuditLogParts minimal (header and events only) +request +responseMetadata",
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{
+            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test37.in"
+        },
+        "matches": {
+            "file_matches": {
+                    "server_root/logs/audit/auditlog.log": {
+                    "format" : "ironbee_audit_log_index",
+                    "simple": [
+                        "Content-Disposition: audit-log-part; name=\"header\"",
+                        "Content-Disposition: audit-log-part; name=\"events\"",
+                        "Content-Disposition: audit-log-part; name=\"http-request-headers\"",
+                        "Content-Disposition: audit-log-part; name=\"http-request-metadata\"",
+                        "Content-Disposition: audit-log-part; name=\"http-response-metadata\""
+                    ],
+                    "re_negated": [
+                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!(header|events|http-request-metadata|http-request-headers|http-response-metadata))"
+                    ]
+
+                }
+            }
+        },
+        "raw_request": "GET / HTTP/1.1\r\nHost: foo\r\n\r\n"
+    },
+    "test38": {
+        "description": "Test of AuditLogParts minimal (header and events only) +request +responseHeaders",
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{
+            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test38.in"
+        },
+        "matches": {
+            "file_matches": {
+                    "server_root/logs/audit/auditlog.log": {
+                    "format" : "ironbee_audit_log_index",
+                    "simple": [
+                        "Content-Disposition: audit-log-part; name=\"header\"",
+                        "Content-Disposition: audit-log-part; name=\"events\"",
+                        "Content-Disposition: audit-log-part; name=\"http-request-headers\"",
+                        "Content-Disposition: audit-log-part; name=\"http-request-metadata\"",
+                        "Content-Disposition: audit-log-part; name=\"http-response-headers\""
+                    ],
+                    "re_negated": [
+                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!(header|events|http-response-headers|http-request-headers|http-request-metadata))"
+                    ]
+
+                }
+            }
+        },
+        "raw_request": "GET / HTTP/1.1\r\nHost: foo\r\n\r\n"
+    },
+    "test39": {
+        "description": "Test of AuditLogParts none", 
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{
+            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test39.in"
+        },
+        "matches": {
+            "file_matches": {
+                    "server_root/logs/audit/auditlog.log": {
+                    "format" : "ironbee_audit_log_index",
+                    "re_negated": [
+                        ".+"
+                    ]
+
+                }
+            }
+        },
+        "raw_request": "GET / HTTP/1.1\r\nHost: foo\r\n\r\n"
+    },
+    "test40": {
+        "description": "Test of AuditLogParts none +events",
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{
+            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test40.in"
+        },
+        "matches": {
+            "file_matches": {
+                    "server_root/logs/audit/auditlog.log": {
+                    "format" : "ironbee_audit_log_index",
+                    "simple": [
+                        "Content-Disposition: audit-log-part; name=\"events\""
+                    ],
+                    "re_negated": [
+                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!events)"
+                    ]
+                }
+            }
+        },
+        "raw_request": "GET / HTTP/1.1\r\nHost: foo\r\n\r\n"
+    },
+    "test41": {
+        "description": "Test of AuditLogParts none +header",
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{
+            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test41.in"
+        },
+        "matches": {
+            "file_matches": {
+                    "server_root/logs/audit/auditlog.log": {
+                    "format" : "ironbee_audit_log_index",
+                    "simple": [
+                        "Content-Disposition: audit-log-part; name=\"header\""
+                    ],
+                    "re_negated": [
+                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!header)"
+                    ]
+                }
+            }
+        },
+        "raw_request": "GET / HTTP/1.1\r\nHost: foo\r\n\r\n"
+    },
+    "test42": {
+        "description": "Test of AuditLogParts none +requestMetadata",
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{
+            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test42.in"
+        },
+        "matches": {
+            "file_matches": {
+                    "server_root/logs/audit/auditlog.log": {
+                    "format" : "ironbee_audit_log_index",
+                    "simple": [
+                        "Content-Disposition: audit-log-part; name=\"http-request-metadata\"" 
+                    ],
+                    "re_negated": [
+                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!http-request-metadata)"
+                    ]
+                }
+            }
+        },
+        "raw_request": "GET / HTTP/1.1\r\nHost: foo\r\n\r\n"
+    },
+    "test43": {
+        "description": "Test of AuditLogParts none +requestHeaders",
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{
+            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test43.in"
+        },
+        "matches": {
+            "file_matches": {
+                    "server_root/logs/audit/auditlog.log": {
+                    "format" : "ironbee_audit_log_index",
+                    "simple": [
+                        "Content-Disposition: audit-log-part; name=\"http-request-headers\""
+                    ],
+                    "re_negated": [
+                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!http-request-headers)"
+                    ]
+                }
+            }
+        },
+        "raw_request": "GET / HTTP/1.1\r\nHost: foo\r\n\r\n"
+    },
+    "test44": {
+        "description": "Test of AuditLogParts none +responeMetadata",
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{
+            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test44.in"
+        },
+        "matches": {
+            "file_matches": {
+                    "server_root/logs/audit/auditlog.log": {
+                    "format" : "ironbee_audit_log_index",
+                    "simple": [
+                        "Content-Disposition: audit-log-part; name=\"http-response-metadata\""
+                    ],
+                    "re_negated": [
+                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!http-response-metadata)"
+                    ]
+                }
+            }
+        },
+        "raw_request": "GET / HTTP/1.1\r\nHost: foo\r\n\r\n"
+    },
+    "test45": {
+        "description": "Test of AuditLogParts none +responeHeaders",
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{
+            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test45.in"
+        },
+        "matches": {
+            "file_matches": {
+                    "server_root/logs/audit/auditlog.log": {
+                    "format" : "ironbee_audit_log_index",  
+                    "simple": [
+                        "Content-Disposition: audit-log-part; name=\"http-response-headers\""
+                    ],
+                    "re_negated": [
+                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!http-response-headers)"
+                    ]
+                }
+            }
+        },
+        "raw_request": "GET / HTTP/1.1\r\nHost: foo\r\n\r\n"
+    },
+    "test46": {
+        "description": "Test of AuditLogParts default",
+        "enabled": "True",
+        "normalize":"False",
+        "local_apache":{
+            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test46.in"
+        },
+        "matches": {
+            "file_matches": {
+                    "server_root/logs/audit/auditlog.log": {
+                    "format" : "ironbee_audit_log_index",
+                    "simple": [
+                        "Content-Disposition: audit-log-part; name=\"http-response-headers\""
+                    ],
+                    "re_negated": [
+                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!http-response-headers)"
+                    ]
+                }
+            }
+        },
+        "raw_request": "GET / HTTP/1.1\r\nHost: foo\r\n\r\n"
+    }
+
+}
