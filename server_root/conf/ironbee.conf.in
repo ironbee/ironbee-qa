@@ -1,25 +1,30 @@
-### Sensor Info
-# 32-bit numeric value
-SensorId 0x98765432
-# Arbitrary name
-SensorName ExampleSensorName
-# Arbitrary hostname
-SensorHostname example.sensor.tld
-
 ### Logging
 #DebugLog /var/log/ironbee/debug.log
-DebugLogLevel 4
+DebugLogLevel @IRONBEE_DEBUG_LOG_LEVEL@ 
 # TODO: Default is still stderr logging - this will go to Apache error_log
 Set logger "mod_ironbee"
 
+### Sensor Info
+# Sensor ID, must follow UUID format
+SensorId @IRONBEE_SENSOR_ID@
+# Arbitrary name
+SensorName @IRONBEE_SENSOR_NAME@
+# Arbitrary hostname
+SensorHostname @IRONBEE_SENSOR_HOSTNAME@ 
+
 ### Load Modules
 LoadModule "ibmod_pcre.so"
+LoadModule "ibmod_radix.so"
+LoadModule "ibmod_binradix.so"
+LoadModule "ibmod_ac.so"
 LoadModule "ibmod_htp.so"
 LoadModule "ibmod_poc_sig.so"
+LoadModule "ibmod_poc_ac_sig.so"
 
 # Lua
 LoadModule "ibmod_lua.so"
 LuaLoadModule "example.lua"
+LuaLoadModule "@CWD@/tests/debuglog.lua"
 
 ### Main Context (need separate directives for these)
 Set parser "htp"
@@ -28,29 +33,42 @@ Set parser "htp"
 #InspectionEngine On
 
 # Enable audit engine
-AuditEngine On 
-AuditLogIndex auditlog.log
-AuditLogBaseDir @IRONBEE_LOGS_DIR@/audit 
-AuditLogDirMode 0755
-AuditLogParts +debug 
+AuditEngine @IRONBEE_AUDIT_ENGINE@
+#AuditLogIndex "|/usr/bin/logger"
+AuditLogIndex @IRONBEE_AUDIT_LOG_INDEX@
+AuditLogBaseDir @IRONBEE_AUDIT_LOG_BASE_DIR@ 
+AuditLogSubDirFormat @IRONBEE_AUDIT_LOG_SUB_DIR_FORMAT@
+AuditLogDirMode @IRONBEE_AUDIT_LOG_DIR_MODE@
 #AuditLogFileMode 0644
+AuditLogParts @IRONBEE_AUDIT_LOG_PARTS@
 
 ### Buffering
 # Request
-RequestBuffering On
+RequestBuffering @IRONBEE_REQUEST_BUFFERING@
 # Response (TODO Implement)
 #ResponseBuffering Off
 
-PocSigTrace On
+PocSigTrace @IRONBEE_POC_SIG_TRACE@
 
 # -- Sites --
 # TODO: Hostname - currently wildcard can only be on left
 
 # Site 1
 <Site site1>
+    # Site ID, must follow UUID format
+    SiteId AAAABBBB-1111-2222-4444-000000000001
     Hostname * ip=127.0.0.1
 
+    # This signature is handled by modules/poc_sig.c
+    # syntax: sigphase field pcre_pattern title
     PocSigReqHead request_line bar "TESTING: Matched bar in request line."
+
+    # This signature is handled by modules/poc_ac_sig.c
+    # and it's basically like poc_sig but adds a prequalifier content processed
+    # by an AhoCorasick Matcher. "foo" is the prequalifier. (bar)+ is a pcre
+    # expression that will be inspected if AhoCorasick has match of foo
+    # syntax: sigphase field prequalifier pcre_pattern title
+    PocACSigReqHead request_line foo (bar)+ "TESTING: Matched foo and (bar)+ in request line."
 
     <Location /foo>
         DebugLogLevel 9
@@ -60,11 +78,16 @@ PocSigTrace On
 
 # Site 2
 <Site site2>
+    # Site ID, must follow UUID format
+    SiteId AAAABBBB-1111-2222-4444-000000000002
     Hostname * ip=127.0.1.1
 </Site>
 
 # Default
 <Site default>
+    # Site ID, must follow UUID format
+    SiteId AAAABBBB-1111-2222-4444-000000000000
     Hostname *
 </Site>
 
+@IRONBEE_EXTRA@

@@ -100,14 +100,14 @@
         "enabled": "True",
         "normalize":"False",
         "local_apache":{
-            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test6.in"
+            "apache_vars" : "@IRONBEE_SENSOR_ID@:AAAABBBB-1111-2222-3333-FFFF00000044"
         },    
         "matches": {
             "file_matches": {
                 "server_root/logs/audit/auditlog.log": {
                     "format" : "ironbee_audit_log_index",
-                    "re": [
-                        "(?sm)^\\s*\\\"log-id\\\"\\:.+98763000\\\"\\,\\s*$"
+                    "simple": [
+                        "\"sensor-id\": \"AAAABBBB-1111-2222-3333-FFFF00000044\""
                     ]
                 }
             }
@@ -119,7 +119,7 @@
         "enabled": "True",
         "normalize":"False",
         "local_apache":{
-            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test7.in"
+            "apache_vars" : "@IRONBEE_SENSOR_NAME@:Trinity"
         },    
         "matches": {
             "file_matches": {
@@ -138,7 +138,7 @@
         "enabled": "True",
         "normalize":"False",
         "local_apache":{
-            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test8.in"
+            "apache_vars" : "@IRONBEE_SENSOR_HOSTNAME@:operation.crossroads.baker"
         },    
         "matches": {
             "file_matches": {
@@ -157,7 +157,7 @@
         "enabled": "True",
         "normalize":"False",
         "local_apache":{
-            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test9.in"
+            "apache_vars" : "@IRONBEE_DEBUG_LOG_LEVEL@:0,@IRONBEE_LOAD_LUA_MODULE@:@CWD@/tests/debuglog.lua"
         },    
         "matches": {
             "file_matches": {
@@ -179,7 +179,7 @@
         "enabled": "True",
         "normalize":"False",
         "local_apache":{
-            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test10.in"
+            "apache_vars" : "@IRONBEE_DEBUG_LOG_LEVEL@:1,@IRONBEE_LOAD_LUA_MODULE@:@CWD@/tests/debuglog.lua"
         },
         "matches": {
             "file_matches": {
@@ -203,7 +203,7 @@
         "enabled": "True",
         "normalize":"False",
         "local_apache":{
-            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test11.in"
+            "apache_vars" : "@IRONBEE_DEBUG_LOG_LEVEL@:2,@IRONBEE_LOAD_LUA_MODULE@:@CWD@/tests/debuglog.lua"
         },
         "matches": {
             "file_matches": {
@@ -227,7 +227,7 @@
         "enabled": "True",
         "normalize":"False",
         "local_apache":{
-            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test12.in"
+            "apache_vars" : "@IRONBEE_DEBUG_LOG_LEVEL@:3,@IRONBEE_LOAD_LUA_MODULE@:@CWD@/tests/debuglog.lua"
         },
         "matches": {
             "file_matches": {
@@ -253,7 +253,7 @@
         "enabled": "True",
         "normalize":"False",
         "local_apache":{
-            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test13.in"
+            "apache_vars" : "@IRONBEE_DEBUG_LOG_LEVEL@:4,@IRONBEE_LOAD_LUA_MODULE@:@CWD@/tests/debuglog.lua"
         },
         "matches": {
             "file_matches": {
@@ -280,7 +280,7 @@
         "enabled": "True",
         "normalize":"False",
         "local_apache":{
-            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test14.in"
+            "apache_vars" : "@IRONBEE_DEBUG_LOG_LEVEL@:5,@IRONBEE_LOAD_LUA_MODULE@:@CWD@/tests/debuglog.lua"
         },
         "matches": {
             "file_matches": {
@@ -308,7 +308,7 @@
         "enabled": "True",
         "normalize":"False",
         "local_apache":{
-            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test15.in"
+            "apache_vars" : "@IRONBEE_DEBUG_LOG_LEVEL@:6,@IRONBEE_LOAD_LUA_MODULE@:@CWD@/tests/debuglog.lua"
         },
         "matches": {
             "file_matches": {
@@ -337,7 +337,7 @@
         "enabled": "True",
         "normalize":"False",
         "local_apache":{
-            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test16.in"
+            "apache_vars" : "@IRONBEE_DEBUG_LOG_LEVEL@:7,@IRONBEE_LOAD_LUA_MODULE@:@CWD@/tests/debuglog.lua"
         },
         "matches": {
             "file_matches": {
@@ -367,7 +367,7 @@
         "enabled": "True",
         "normalize":"False",
         "local_apache":{
-            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test17.in"
+            "apache_vars" : "@IRONBEE_DEBUG_LOG_LEVEL@:8,@IRONBEE_LOAD_LUA_MODULE@:@CWD@/tests/debuglog.lua"
         },
         "matches": {
             "file_matches": {
@@ -398,7 +398,7 @@
         "enabled": "True",
         "normalize":"False",
         "local_apache":{
-            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test18.in"
+            "apache_vars" : "@IRONBEE_DEBUG_LOG_LEVEL@:9,@IRONBEE_LOAD_LUA_MODULE@:@CWD@/tests/debuglog.lua"
         },
         "matches": {
             "file_matches": {
@@ -453,7 +453,7 @@
         "enabled": "True",
         "normalize":"False",
         "local_apache":{
-            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test20.in"
+            "apache_vars" : "@IRONBEE_EXTRA@:LoadModule \"Abel.so\""
         },
         "matches": {
             "file_matches": {
@@ -551,7 +551,7 @@
         "enabled": "True",
         "normalize":"False",
         "local_apache":{
-            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test25.in"
+            "apache_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:AggievillePBR"
         },
         "matches": {
             "file_matches": {
@@ -570,7 +570,7 @@
         "enabled": "True",
         "normalize":"False",
         "local_apache":{
-            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test26.in"
+            "apache_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:minimal"
         },
         "matches": {
             "file_matches": {
@@ -593,7 +593,7 @@
         "enabled": "True",
         "normalize":"False",
         "local_apache":{
-            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test27.in"
+            "apache_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:minimal +request"
         },
         "matches": {
             "file_matches": {
@@ -619,7 +619,7 @@
         "enabled": "True",
         "normalize":"False",
         "local_apache":{
-            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test28.in"
+            "apache_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:minimal +request -requestMetadata"
         },
         "matches": {
             "file_matches": {
@@ -644,7 +644,7 @@
         "enabled": "True",
         "normalize":"False",
         "local_apache":{
-            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test29.in"
+            "apache_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:minimal +request -requestHeaders"
         },
         "matches": {
             "file_matches": {
@@ -669,7 +669,7 @@
         "enabled": "True",
         "normalize":"False",
         "local_apache":{
-            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test30.in"
+            "apache_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:minimal +response"
         },
         "matches": {
             "file_matches": {
@@ -695,7 +695,7 @@
         "enabled": "True",
         "normalize":"False",
         "local_apache":{
-            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test31.in"
+            "apache_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:minimal +response -responseMetadata"
         },
         "matches": {
             "file_matches": {
@@ -720,7 +720,7 @@
         "enabled": "True",
         "normalize":"False",
         "local_apache":{
-            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test32.in"
+            "apache_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:minimal +response -responseHeaders" 
         },
         "matches": {
             "file_matches": {
@@ -745,7 +745,7 @@
         "enabled": "True",
         "normalize":"False",
         "local_apache":{
-            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test33.in"
+            "apache_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:minimal +response +requestHeaders"
         },
         "matches": {
             "file_matches": {
@@ -772,7 +772,7 @@
         "enabled": "True",
         "normalize":"False",
         "local_apache":{
-            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test34.in"
+            "apache_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:minimal +response +requestMetadata" 
         },
         "matches": {
             "file_matches": {
@@ -799,7 +799,7 @@
         "enabled": "True",
         "normalize":"False",
         "local_apache":{
-            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test35.in"
+            "apache_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:minimal +response -responseMetadata" 
         },
         "matches": {
             "file_matches": {
@@ -824,7 +824,7 @@
         "enabled": "True",
         "normalize":"False",
         "local_apache":{
-            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test36.in"
+            "apache_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:minimal +response -responseHeaders"
         },
         "matches": {
             "file_matches": {
@@ -849,7 +849,7 @@
         "enabled": "True",
         "normalize":"False",
         "local_apache":{
-            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test37.in"
+            "apache_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:minimal +request +responseMetadata"
         },
         "matches": {
             "file_matches": {
@@ -876,7 +876,7 @@
         "enabled": "True",
         "normalize":"False",
         "local_apache":{
-            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test38.in"
+            "apache_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:minimal +request +responseHeaders"
         },
         "matches": {
             "file_matches": {
@@ -903,7 +903,7 @@
         "enabled": "True",
         "normalize":"False",
         "local_apache":{
-            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test39.in"
+            "apache_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:none"
         },
         "matches": {
             "file_matches": {
@@ -923,7 +923,7 @@
         "enabled": "True",
         "normalize":"False",
         "local_apache":{
-            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test40.in"
+            "apache_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:none +events"
         },
         "matches": {
             "file_matches": {
@@ -945,7 +945,7 @@
         "enabled": "True",
         "normalize":"False",
         "local_apache":{
-            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test41.in"
+            "apache_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:none +header"
         },
         "matches": {
             "file_matches": {
@@ -967,7 +967,7 @@
         "enabled": "True",
         "normalize":"False",
         "local_apache":{
-            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test42.in"
+            "apache_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:none +requestMetadata"
         },
         "matches": {
             "file_matches": {
@@ -989,7 +989,7 @@
         "enabled": "True",
         "normalize":"False",
         "local_apache":{
-            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test43.in"
+            "apache_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:none +requestHeaders"
         },
         "matches": {
             "file_matches": {
@@ -1011,7 +1011,7 @@
         "enabled": "True",
         "normalize":"False",
         "local_apache":{
-            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test44.in"
+            "apache_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:none +responseMetadata"
         },
         "matches": {
             "file_matches": {
@@ -1033,7 +1033,7 @@
         "enabled": "True",
         "normalize":"False",
         "local_apache":{
-            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test45.in"
+            "apache_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:none +responseHeaders"
         },
         "matches": {
             "file_matches": {
@@ -1052,7 +1052,7 @@
     },
     "test46": {
         "description": "Test of AuditLogParts default",
-        "enabled": "True",
+        "enabled": "False",
         "normalize":"False",
         "local_apache":{
             "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test46.in"

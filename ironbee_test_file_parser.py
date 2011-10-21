@@ -25,6 +25,7 @@ import re
 import sys
 from pprint import pprint
 import nids
+import StringIO
 
 class FileParser:
     #Parse Ivan's Evasion Test Format
@@ -62,9 +63,83 @@ class FileParser:
         return (payload, rules)
     
     #Parse a pcap file using tshark    
-    def pcap_tshark(self,file):
-        print "Not yet implemented"
+    def tshark_parse_pcap(self,options,file):
+        from lxml import etree
+        import binascii
+        streams_list = []
+        streams_seen = []
+        try:
+            #this should always give us src first I think..
+            cmd = "tshark -n -r %s -R tcp.stream -R http.request -Tfields -e tcp.stream -e ip.src -e tcp.srcport -e ip.dst -e tcp.dstport" % (file)
+            (returncode, stdout, stderr)=cmd_wrapper(options,cmd,False)
+        except:
+            options.log.error("Failed to parse pcap")
 
+        streams = re.finditer(r'^(?P<stream_num>\d+)\s+(?P<src>\d+\.\d+\.\d+\.\d+)\s+(?P<sport>\d+)\s+(?P<dst>\d+\.\d+\.\d+\.\d+)\s+(?P<dport>\d+)\s*$',stdout,re.M)
+        for stream in streams:
+            if stream.group('stream_num') in streams_seen:
+                options.log.debug("skipping stream we have already seen it: %s" % stream.group('stream_num'))
+                next
+            else:
+                streams_seen.append(stream.group('stream_num'))
+
+                stream_dict = {}
+                stream_dict['num'] = stream.group('stream_num')
+                stream_dict['file_format'] = "%s-%s-%s-%s-%s-%s" % (os.path.basename(file), stream.group('stream_num'), stream.group('src'), stream.group('sport'), stream.group('dst'), stream.group('dport'))
+                stream_dict['pcap_all'] = "%s.all.pcap" % (stream_dict['file_format'])
+                stream_dict['pdml_all'] = "%s.all.xml" % (stream_dict['file_format'])
+
+                stream_dict['pcap_client'] = "%s.client.pcap" % (stream_dict['file_format'])
+                stream_dict['pdml_client'] = "%s.client.xml" % (stream_dict['file_format'])
+
+                stream_dict['pcap_server'] = "%s.server.pcap" % (stream_dict['file_format'])
+                stream_dict['pdml_server'] = "%s.server.xml" % (stream_dict['file_format']) 
+
+                #all
+                cmd = "tshark -n -r %s -R \"tcp.stream eq %s\" -w %s" % (file, stream_dict['num'], stream_dict['pcap_all'])
+                (returncode, stdout, stderr)=cmd_wrapper(options,cmd,False)
+                 
+                cmd = "tshark -n -r %s -Tpdml > %s" % (stream_dict['pcap_all'], stream_dict['pdml_all'])
+                (returncode, stdout, stderr)=cmd_wrapper(options,cmd,False)
+
+                #client
+                cmd = "tshark -n -r %s -R \"ip.src eq %s\" -Tpdml > %s" % (stream_dict['pcap_all'], stream.group('src'), stream_dict['pdml_client'])
+                (returncode, stdout, stderr)=cmd_wrapper(options,cmd,False)
+                cmd = "tshark -n -r %s -R \"ip.src eq %s\" -w %s" % (stream_dict['pcap_all'], stream.group('src'), stream_dict['pcap_client'])
+                (returncode, stdout, stderr)=cmd_wrapper(options,cmd,False)
+
+                tree = etree.parse(stream_dict['pdml_client'])
+                stream_dict['request_list'] = []
+                for e in tree.xpath('/pdml/packet/proto[@name="http"]'):
+                    http_bytes = ''
+                    for kid in e.iterchildren(reversed=False):
+                        http_value = kid.get("value")
+                        if http_value != None:
+                            #print kid.get("name")
+                            http_bytes = http_bytes + http_value
+                    stream_dict['request_list'].append(binascii.unhexlify(http_bytes))
+                
+                #server
+                cmd = "tshark -n -r %s -R \"ip.src eq %s\" -Tpdml > %s" % (stream_dict['pcap_all'], stream.group('dst'), stream_dict['pdml_server'])
+                (returncode, stdout, stderr)=cmd_wrapper(options,cmd,False)
+                cmd = "tshark -n -r %s -R \"ip.src eq %s\" -w %s" % (stream_dict['pcap_all'], stream.group('dst'), stream_dict['pcap_server'])
+                (returncode, stdout, stderr)=cmd_wrapper(options,cmd,False)
+
+                tree = etree.parse(stream_dict['pdml_server'])
+                stream_dict['response_list'] = []
+                for e in tree.xpath('/pdml/packet/proto[@name="http"]'):
+                    http_bytes = ''    
+                    for kid in e.iterchildren(reversed=False):
+                        http_value = kid.get("value")
+                        if http_value != None:
+                            #print kid.get("name")
+                            http_bytes = http_bytes + http_value
+                    stream_dict['response_list'].append(binascii.unhexlify(http_bytes))
+                streams_list.append(stream_dict.copy())
+
+        #print streams_list
+        return streams_list
+ 
     #Parse nikto2 variables file.
     def nikto2_vars(self,file):
         self.nikto_vars = {}
@@ -100,27 +175,89 @@ class FileParser:
         #print self.nikto_list
         #sys.exit(-1)
         return self.nikto_list
-                 
+    #TODO: Replace this parsing with a more complete parser like https://github.com/benoitc/http-parser
     def handleTcpStream(self,tcp):
         if tcp.nids_state == nids.NIDS_JUST_EST:
             ((src, sport), (dst, dport)) = tcp.addr
+
+            stream_hash_val = (dottedQuadToNum(src) + dottedQuadToNum(dst) + sport + dport)
+            self.stream_hash[stream_hash_val] =  self.stream_count
+            self.stream_count = self.stream_count + 1 
+
             tcp.client.collect = 1
             tcp.server.collect = 1
+
         elif tcp.nids_state == nids.NIDS_DATA:
             tcp.discard(0)
         elif tcp.nids_state in (nids.NIDS_CLOSE, nids.NIDS_TIMEOUT, nids.NIDS_RESET):
             toserver = tcp.server.data[:tcp.server.count]
             toclient = tcp.client.data[:tcp.client.count]
             ((src, sport), (dst, dport)) = tcp.addr
+            stream_hash_val = (dottedQuadToNum(src) + dottedQuadToNum(dst) + sport + dport)
+
             try:
-                m = re.match(r'^(?P<http_method>[A-Z]+)\s+(?P<http_uri>.+)\s+HTTP\/(?P<http_version>\d\.\d)\r?\n',toserver)
-                if m != None:
-                    #print "%s:%s -> %s:%s" % (src,sport,dst,dport)
-                    #print("method:%s http_uri:%s http_version:%s" % (m.group('http_method'), m.group('http_uri'), m.group('http_version')))
-                    #print toserver
-                    self.pcap_list.append(toserver)
+                tmp_dict = {}
+                to_server_string_io = StringIO.StringIO(toserver)
+                to_client_string_io = StringIO.StringIO(toclient)
+ 
+                tmp_dict['num'] = self.stream_hash[stream_hash_val]                    
+                tmp_dict['src'] = src
+                tmp_dict['dst'] = dst
+                tmp_dict['sport'] = sport
+                tmp_dict['dport'] = dport
+                tmp_dict['toclient'] = toclient
+                tmp_dict['tosever'] = toserver
+                tmp_dict['request_list'] = []
+                tmp_dict['response_list'] = []
+                tmp_dict['file_format'] = "%s-%s-%s-%s-%s-%s" % (self.filename, tmp_dict['num'], tmp_dict['src'], tmp_dict['sport'], tmp_dict['dst'], tmp_dict['dport'])
+
+                requests=[]
+                for m in re.finditer(r'^(?P<http_method>[A-Z\-]+)\s+(?P<http_uri>.+)\s+HTTP\/(?P<http_version>\d\.\d)\r?\n',toserver,re.MULTILINE):
+                    requests.append(m.start())
+                if requests != '':
+                    num_requests = len(requests)
+                    i = 0
+                while i < num_requests:
+                    byte_count = 0
+                    stream_size = len(toserver)
+                    to_server_string_io.seek(int(requests[i]))
+                    request = ""
+                    if (i + 1) < num_requests:
+                        request = to_server_string_io.read(int(requests[i+1]) - int(requests[i]))
+                    else:
+                        request = to_server_string_io.read()
+                    tmp_dict['request_list'].append(request)
+                    i = i  + 1
+                    
+                responses=[]
+                #Note this will fail if there are HTTP/0.9 request/responses
+                for m in re.finditer(r'(HTTP\/\d\.\d\s+\d+(\.\d{3})?\s+[^\r\n]+\r?$)',toclient,re.MULTILINE):
+                   responses.append(m.start())
+                if responses != '':
+                    num_responses = len(responses)
+                    i = 0
+                while i < num_responses:
+                    byte_count = 0
+                    stream_size = len(toclient)
+                    to_client_string_io.seek(int(responses[i]))
+                    response = ""
+                    if (i + 1) < num_responses:
+                        response = to_client_string_io.read(int(responses[i+1]) - int(responses[i]))
+                    else:
+                        response = to_client_string_io.read()
+                    tmp_dict['response_list'].append(response)
+                    i = i  + 1
+
+                request_list_len = len(tmp_dict['request_list']) 
+                response_list_len = len(tmp_dict['response_list'])
+ 
+                if (request_list_len != response_list_len):
+                    options.log.error("request_list length %d not equal to response_list length %d\n" % (request_list_len,response_list_len))  
+                
+                if((request_list_len > 0) or (response_list_len > 0)):           
+                    self.http_stream_list.append(tmp_dict.copy())
             except:
-                print "failed to print toserver data %s" % (tcp.nids_state)
+                options.log.error("failed to parse stream data for file" % (self.filename))
 
     #Parse a pcap file using libnids
     def parse_pcap(self,options,file):
@@ -129,9 +266,11 @@ class FileParser:
         except:
             options.log.error("failed to import LibNIDS are you sure it's installed")
             sys.exit(-1)
-
-        self.pcap_list = []
         
+        self.http_stream_list = []
+        self.stream_hash = {} 
+        self.stream_count = 0
+        self.filename = os.path.basename(file) 
         if options.pcap_bpf != None:
             nids.param("pcap_filter", options.pcap_bpf)
             
@@ -145,7 +284,7 @@ class FileParser:
             options.log.error("nids/pcap error:" % (e))
         except Exception, e:
             options.log.error("misc. exception (runtime error in user callback?):" % (e))
-        return self.pcap_list
+        return self.http_stream_list
 
     def parse_ironbee_mime_headers(self,header_lines):
         headers_dict={}
@@ -324,10 +463,11 @@ class FileParser:
         return file_list
     
     def file_from_audit_log_index_line(self,options,index_file,line):
+        #2011-10-20T13:05:51.9557-0500 127.0.0.1 127.0.0.1 AAAABBBB-1111-2222-3333-FFFF00000023 AAAABBBB-1111-2222-4444-000000000001 4ea062ff-21f7-4555-8fff-38c579012c09 20111020-1805/4ea062ff-21f7-4555-8fff-38c579012c09.log
         #127.0.0.1:9931 127.0.0.1 - - [-] "-" 0 0 "-" "-" 4dc98781-17f1-426f-8fff-60f901234567 "-" /20110510/1844/4dc98781-17f1-426f-8fff-60f901234567.log 0 0 -
-        m = re.match(r'^(?P<hostname>\S+) (?P<remote_host>\S+) (?P<remote_username>\S+) (?P<local_username>\S+) (?P<date>\[.*\]) \"(?P<request>.*)\" (?P<status>\S+) (?P<bytes_out>\S+) \"(?P<referer>.*)\" \"(?P<user_agent>.*)\" (?P<unique_id>\S+) \"(?P<session_id>.*)\" (?P<filename>\S+) (?P<offset>\d+) (?P<size>\d+) (?P<hash>\S+)(?P<extra>.*)$',line)
+        m = re.match(r'^(?P<date>\S+) (?P<remote_host>\S+) (?P<local_host>\S+) (?P<sensor_id>\S+) (?P<site_id>\S+) (?P<unique_id>\S+) (?P<filename>\S+)$',line)
         if m:
-            filename = ("%s%s" % (os.path.dirname(index_file),m.group('filename')))
+            filename = ("%s/%s" % (os.path.dirname(index_file),m.group('filename')))
             return filename
         else:
             options.log.error("non-matching ironbee audit log index line %s" % (line))
@@ -407,8 +547,9 @@ class FileParser:
                 disabled_list.append(test)
                 
         for test in disabled_list:
-            del tmp_dict[test]
-            options.log.error('skipping test %s as it is not enabled or does not match test regex' % test)
+            if tmp_dict.has_key(test):
+                del tmp_dict[test]
+                options.log.error('skipping test %s as it is not enabled or does not match test regex' % test)
             
         return tmp_dict
     

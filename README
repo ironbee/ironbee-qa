@@ -15,6 +15,9 @@ sudo python ./ironbee_test.py --file-glob="ironbee-audit.log.sample" --host="172
 #PCAP format
 python ./ironbee_test.py --file-glob="/home/coz/sandnet.pcap" --host="172.18.100.105" --port=80 --file-format="pcap" --pcap-bpf="tcp and port 80"
 
+#PCAP format using tshark
+python ./ironbee_test.py --file-glob="/home/coz/sandnet.pcap" --host="172.18.100.105" --port=80 --file-format="tshark" 
+
 #Nikto DB format
 python ./ironbee_test.py --file-glob="/home/coz/db_tests" --host="172.18.100.105" --port=80 --file-format="nikto2_db" --nikto2-vars-file="/home/coz/db_variables"
 
@@ -30,8 +33,12 @@ python ./ironbee_test.py  --one-shot="GET / HTTP/1.1\r\nHost: foo\r\n\r\n" --hos
 #IronBee JSON test file format
 ./ironbee_test.py --console-log-level="error" --local-apache --file-glob="tests/*.json" --file-format="ironbee_test_file"
 
-#Read PCAP and print RAW requests
+#Read PCAP and convert to raw requests using LibNIDS. Output format is input_filename-stream_num-src-sport-dst-dport.(request|response|merged).(request|response) number in stream.raw
 ./ironbee_test.py --file-glob=/home/coz/sqlmap.pcap --console-log-level=error --file-format=pcap2raw --no-normalize
+
+#Read PCAP and convert to raw requests using Tshark/PDML. Output format is input_filename-stream_num-src-sport-dst-dport.(request|response|merged).(request|response) number in stream.raw
+#Note: Will also split out traffic into PDML, PCAP format using the same naming convention.
+./ironbee_test.py --file-glob=/home/coz/sqlmap.pcap --console-log-level=error --file-format=tshark2raw --no-normalize
 
 #Judy Evasions
 sudo ./ironbee_test.py  --one-shot="GET / HTTP/1.1\r\nHost: smart.people.on.ice\r\n\r\n" --host="172.18.101.100" --port=80 --send-mode="jnovak_send_rst_bad_chksum"

@@ -75,9 +75,9 @@ def parse_apache_vars(options):
     tmp_apache_dict = {}
 
     for var_entry in tmp_apache_list:
-        var_entry = var_entry.replace(' ','')
+        #var_entry = var_entry.replace(' ','')
         tmp_apache_list2 = var_entry.split(":")
-        tmp_apache_dict[tmp_apache_list2[0]] = tmp_apache_list2[1]
+        tmp_apache_dict[tmp_apache_list2[0].replace(' ','')] = tmp_apache_list2[1]
 
     #Current Working Dir
     if tmp_apache_dict.has_key('@CWD@'):
@@ -105,21 +105,105 @@ def parse_apache_vars(options):
 
     #Apache Document Root
     if tmp_apache_dict.has_key('@IRONBEE_DOCROOT_DIR@'):
-         options.apache_vars['@IRONBEE_DOCROOT_DIR@'] =  tmp_apache_dict['@IRONBEE_DOCROOT_DIR@']
+        options.apache_vars['@IRONBEE_DOCROOT_DIR@'] =  tmp_apache_dict['@IRONBEE_DOCROOT_DIR@']
     else:
         options.apache_vars['@IRONBEE_DOCROOT_DIR@'] = options.apache_vars['@IRONBEE_SERVERROOT_DIR@'] + "/htdocs"
 
     #Ironbee coredump directory
     if tmp_apache_dict.has_key('@IRONBEE_COREDUMP_DIR@'):
-         options.apache_vars['@IRONBEE_COREDUMP_DIR@'] =  tmp_apache_dict['@IRONBEE_COREDUMP_DIR@']
+        options.apache_vars['@IRONBEE_COREDUMP_DIR@'] =  tmp_apache_dict['@IRONBEE_COREDUMP_DIR@']
     else:
         options.apache_vars['@IRONBEE_COREDUMP_DIR@'] = options.apache_vars['@IRONBEE_SERVERROOT_DIR@'] + "/tmp"     
         
     #Ironbee test directory
     if tmp_apache_dict.has_key('@IRONBEE_TESTS_DIR@'):
-         options.apache_vars['@IRONBEE_TESTS_DIR@'] =  tmp_apache_dict['@IRONBEE_TESTS_DIR@']
+        options.apache_vars['@IRONBEE_TESTS_DIR@'] =  tmp_apache_dict['@IRONBEE_TESTS_DIR@']
     else:
         options.apache_vars['@IRONBEE_TESTS_DIR@'] = options.apache_vars['@CWD@'] + "/tests"      
+
+    #Ironbee DebugLogLevel 
+    if tmp_apache_dict.has_key('@IRONBEE_DEBUG_LOG_LEVEL@'):
+        options.apache_vars['@IRONBEE_DEBUG_LOG_LEVEL@'] =  tmp_apache_dict['@IRONBEE_DEBUG_LOG_LEVEL@']
+    else:
+        options.apache_vars['@IRONBEE_DEBUG_LOG_LEVEL@'] = "4"
+
+    #Ironbee SensorId 
+    if tmp_apache_dict.has_key('@IRONBEE_SENSOR_ID@'):
+        options.apache_vars['@IRONBEE_SENSOR_ID@'] =  tmp_apache_dict['@IRONBEE_SENSOR_ID@']
+    else:
+        options.apache_vars['@IRONBEE_SENSOR_ID@'] = "AAAABBBB-1111-2222-3333-FFFF00000023"
+
+    #Ironbee SensorName 
+    if tmp_apache_dict.has_key('@IRONBEE_SENSOR_NAME@'):
+        options.apache_vars['@IRONBEE_SENSOR_NAME@'] =  tmp_apache_dict['@IRONBEE_SENSOR_NAME@']
+    else:
+        options.apache_vars['@IRONBEE_SENSOR_NAME@'] = "ExampleSensorName"
+
+    #Ironbee LuaLoadModule
+    if tmp_apache_dict.has_key('@IRONBEE_LUA_LOAD_MODULE@'):
+        options.apache_vars['@IRONBEE_LUA_LOAD_MODULE@'] = tmp_apache_dict['@IRONBEE_LUA_LOAD_MODULE@']
+    else:
+        options.apache_vars['@IRONBEE_LUA_LOAD_MODULE@'] = "\"example.lua\"" 
+
+    #Ironbee SensorName 
+    if tmp_apache_dict.has_key('@IRONBEE_SENSOR_HOSTNAME@'):
+        options.apache_vars['@IRONBEE_SENSOR_HOSTNAME@'] =  tmp_apache_dict['@IRONBEE_SENSOR_HOSTNAME@']
+    else:
+        options.apache_vars['@IRONBEE_SENSOR_HOSTNAME@'] = "example.sensor.tld"
+
+    #Ironbee AuditEngine 
+    if tmp_apache_dict.has_key('@IRONBEE_AUDIT_ENGINE@'):
+        options.apache_vars['@IRONBEE_AUDIT_ENGINE@'] =  tmp_apache_dict['@IRONBEE_AUDIT_ENGINE@']
+    else:
+        options.apache_vars['@IRONBEE_AUDIT_ENGINE@'] = "On"
+
+    #Ironbee AuditLogIndex
+    if tmp_apache_dict.has_key('@IRONBEE_AUDIT_LOG_INDEX@'):
+        options.apache_vars['@IRONBEE_AUDIT_LOG_INDEX@'] =  tmp_apache_dict['@IRONBEE_AUDIT_LOG_INDEX@']
+    else:
+        options.apache_vars['@IRONBEE_AUDIT_LOG_INDEX@'] = "auditlog.log"
+
+    #Ironbee AuditLogBaseDir
+    if tmp_apache_dict.has_key('@IRONBEE_AUDIT_LOG_BASE_DIR@'):
+        options.apache_vars['@IRONBEE_AUDIT_LOG_BASE_DIR@'] =  tmp_apache_dict['@IRONBEE_AUDIT_LOG_BASE_DIR@']
+    else:
+        options.apache_vars['@IRONBEE_AUDIT_LOG_BASE_DIR@'] = options.apache_vars['@IRONBEE_LOGS_DIR@'] + "/audit"
+
+    #IronBee AuditLogSubDirFormat
+    if tmp_apache_dict.has_key('@IRONBEE_AUDIT_LOG_SUB_DIR_FORMAT@'):
+        options.apache_vars['@IRONBEE_AUDIT_LOG_SUB_DIR_FORMAT@'] =  tmp_apache_dict['@IRONBEE_AUDIT_LOG_SUB_DIR_FORMAT@']
+    else:
+        options.apache_vars['@IRONBEE_AUDIT_LOG_SUB_DIR_FORMAT@'] = "\"%Y%m%d-%H%M\""
+
+    #IronBee AuditLogDirMode 
+    if tmp_apache_dict.has_key('@IRONBEE_AUDIT_LOG_DIR_MODE@'):
+        options.apache_vars['@IRONBEE_AUDIT_LOG_DIR_MODE@'] =  tmp_apache_dict['@IRONBEE_AUDIT_LOG_DIR_MODE@']
+    else:
+        options.apache_vars['@IRONBEE_AUDIT_LOG_DIR_MODE@'] = "0755"
+
+    #IronBee AuditLogParts 
+    if tmp_apache_dict.has_key('@IRONBEE_AUDIT_LOG_PARTS@'):
+        options.apache_vars['@IRONBEE_AUDIT_LOG_PARTS@'] =  tmp_apache_dict['@IRONBEE_AUDIT_LOG_PARTS@']
+    else:
+        options.apache_vars['@IRONBEE_AUDIT_LOG_PARTS@'] = "minimal request -requestBody response -responseBody"
+
+    #IronBee RequestBuffering
+    if tmp_apache_dict.has_key('@IRONBEE_REQUEST_BUFFERING@'):
+        options.apache_vars['@IRONBEE_REQUEST_BUFFERING@'] =  tmp_apache_dict['@IRONBEE_REQUEST_BUFFERING@']
+    else:
+        options.apache_vars['@IRONBEE_REQUEST_BUFFERING@'] = "On"
+
+    #IronBee PoCSigTrace
+    if tmp_apache_dict.has_key('@IRONBEE_POC_SIG_TRACE@'):
+        options.apache_vars['@IRONBEE_POC_SIG_TRACE@'] =  tmp_apache_dict['@IRONBEE_POC_SIG_TRACE@']
+    else:
+        options.apache_vars['@IRONBEE_POC_SIG_TRACE@'] = "On"
+
+    #IronBee Any Extra Config Directives
+    if tmp_apache_dict.has_key('@IRONBEE_EXTRA@'):
+        options.apache_vars['@IRONBEE_EXTRA@'] =  tmp_apache_dict['@IRONBEE_EXTRA@']
+    else:
+        options.apache_vars['@IRONBEE_EXTRA@'] = ""
 
     ############# Support Variable replacement for these two vars only#################
     #Apache config template
@@ -214,6 +298,6 @@ def apache_check_for_core(options):
             options.log.debug('checked for core dump in %s but none found' % (options.apache_vars['@IRONBEE_COREDUMP_DIR@']))
             return
         elif len(core_file_list) > 1:
-            options.log.debug('more than one core dump found in %s, please remove old core dumps %s' % (options.apache_vars['@IRONBEE_COREDUMP_DIR@']),core_file_list)
+            options.log.debug('more than one core dump found in %s, please remove old core dumps %s' % (options.apache_vars['@IRONBEE_COREDUMP_DIR@'],core_file_list))
             return
         

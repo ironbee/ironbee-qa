@@ -54,7 +54,7 @@ if __name__ == "__main__":
     #Glob of test files
     parser.add_option("--file-glob", dest="file_glob", type="string", help="glob of files we will use as input")
     #Format of files we will be testing
-    parser.add_option("--file-format", dest="file_format", type="string", help="type of file we will be processing mod_security_r,iristic_evasion,raw,pcap,ironbee_audit_log,ironbee_audit_log_index,ironbee_test_file")
+    parser.add_option("--file-format", dest="file_format", type="string", help="type of file we will be processing mod_security_r,iristic_evasion,raw,pcap,ironbee_audit_log,ironbee_audit_log_index,ironbee_test_file,pcap2raw,tshark2raw")
     #File matching
     #parser.add_option("--output-re-match", dest="output_re_match", type="string", help="seperator is +=+= (<path>)+=+=(<format>)+=+=(<regex>)#=#=(<optional_regex>):+:+(<path2>)+=+=(<format>)+=+=(<regex>)#=#=(<optional_regex>) ex: server_root/logs/error.log+=+=text+=+=example\.onEventConnDataIn\: GET \/index\.html HTTP\/1\.1\\\r\\\n")
     #File matching
@@ -74,12 +74,16 @@ if __name__ == "__main__":
     parser.add_option("--no-host-header-replace", dest="replace_host_header", default=True, action="store_false", help="By default we replace the host header with what is provided via the --host option.  This option will use the host header from the original request")
     #Optional BPF to apply when parsing pcaps
     parser.add_option("--pcap-bpf", dest="pcap_bpf", help="If parsing a pcap file, optionally apply user supplied bpf")
+
     #Exit if we encounter a parsing error. Other wise default is to attempt to send request we could not parse.
     parser.add_option("--exit-on-parse-error", default=False, action="store_true",dest="exit_on_parse_error", help="By default we will send the request and show response even if we have parsing problems. This will force an exit on a HTTP parsing error.")
     #If using the nikto2 db we need the vars file as well
     parser.add_option("--nikto2-vars-file", dest="nikto2_vars_file", type="string", help="you must specify the path to the nikto2 variable file usually called db_variables")
     #If using ironbee_test_format this will limit the tests we run to the user specified regex
     parser.add_option("--ironbee-test-regex",dest="ironbee_test_regex", default=None, help="regex of test id's you want to include otherwise all tests are run")
+
+    #Optional BPF to apply when parsing pcaps
+    parser.add_option("--convert-2-raw-parts", dest="convert_2_raw_parts", help="optional list of parts you want to print when converting from some other format to raw. avaliable options are request,response, request_line, request_method,")
     
     #parse the opts
     (options, args) = parser.parse_args()
@@ -196,24 +200,121 @@ if __name__ == "__main__":
                             apache_check_for_core(options)
                             
                 elif options.file_format == "pcap":
-                    raw_request_list = fp.parse_pcap(options,test)
-                    for request in raw_request_list:
-                        parsed_request = parse_payload(options,options.host,options.port,request,options.normalize)
-                        parsed_response = send_request(options,parsed_request)
+                    stream_dict = fp.parse_pcap(options,test)
+                    #try to deal with pipelined requests
+                    i = 0
+                    for stream in stream_dict:
+                        for request in stream_dict[i]['request_list']:
+                            if request != None:
+                                parsed_request = parse_payload(options,options.host,options.port,request,options.normalize)
+                                parsed_response = send_request(options,parsed_request)
                         
-                        for response_part in parsed_response:
-                            options.log.debug("%s:\n\t%s" % (response_part,parsed_response[response_part]))
+                                for response_part in parsed_response:
+                                    options.log.debug("%s:\n\t%s" % (response_part,parsed_response[response_part]))
                             
-                        if options.local_apache:
-                            apache_check_for_core(options)
+                                if options.local_apache:
+                                    apache_check_for_core(options)
+                        i = i + 1
 
                 elif options.file_format == "pcap2raw":
-                    raw_request_list = fp.parse_pcap(options,test)
-                     
-                    for request in raw_request_list:
-                        print request
-                        parsed_request = parse_payload(options,options.host,options.port,request,options.normalize)
-                          
+                    stream_list = fp.parse_pcap(options,test)
+                    for stream in stream_list:
+                         request_list_len = len(stream['request_list'])
+                         response_list_len = len(stream['response_list'])
+
+                         if(request_list_len == response_list_len):
+                             merged = open('%s.merged.raw' % (stream['file_format']) , 'w')
+
+                             i = 0
+                             while i < request_list_len:
+                                 request = open('%s.request.%s.raw' % (stream['file_format'], i) , 'w')
+                                 request.write(stream['request_list'][i])
+                                 merged.write(stream['request_list'][i])
+                                 request.close()
+
+                                 response = open('%s.response.%s.raw' % (stream['file_format'], i) , 'w')
+                                 response.write(stream['response_list'][i])
+                                 merged.write(stream['response_list'][i])
+                                 response.close()
+                                 i = i + 1
+
+                             merged.close()
+
+                         else:
+                             print "WARNING!!! there is a mis-match between requests and responses in stream %s\n" % (stream['num'])
+                             #requests
+                             i = 0
+                             while i < request_list_len:
+                                 f = open('%s.request.%s.raw' % (stream['file_format'], i) , 'w')
+                                 f.write(stream['request_list'][i])
+                                 f.close()
+                                 i = i + 1
+
+                             #responses                             
+                             i = 0
+                             while i < response_list_len:
+                                 f = open('%s.response.%s.raw' % (stream['file_format'], i) , 'w')
+                                 f.write(stream['response_list'][i])
+                                 f.close()
+                                 i = i + 1
+
+                elif options.file_format == "tshark":
+                    stream_list = fp.tshark_parse_pcap(options,test)
+                    for stream in stream_list:
+                        for request in stream['request_list']:
+                            if request != None:
+                                parsed_request = parse_payload(options,options.host,options.port,request,options.normalize)
+                                parsed_response = send_request(options,parsed_request)
+
+                                for response_part in parsed_response:
+                                    options.log.debug("%s:\n\t%s" % (response_part,parsed_response[response_part]))
+
+                                if options.local_apache:
+                                    apache_check_for_core(options)
+
+                elif options.file_format == "tshark2raw":
+                    stream_list = fp.tshark_parse_pcap(options,test)
+                    for stream in stream_list:
+                         request_list_len = len(stream['request_list'])
+                         response_list_len = len(stream['response_list'])
+
+                         if(request_list_len == response_list_len):
+                             #merged request/response raw
+                             merged = open('%s.merged.raw' % (stream['file_format']) , 'w')
+
+                             i = 0
+                             while i < request_list_len:
+                                 request = open('%s.request.%s.raw' % (stream['file_format'], i) , 'w')
+                                 request.write(stream['request_list'][i])
+                                 merged.write(stream['request_list'][i])
+                                 request.close()
+                                 
+                                 response = open('%s.response.%s.raw' % (stream['file_format'], i) , 'w')
+                                 response.write(stream['response_list'][i])
+                                 merged.write(stream['response_list'][i])
+                                 response.close()
+                                 i = i + 1 
+                                  
+                             merged.close()
+
+                         else:
+                             options.log.error("WARNING!!! there is a mis-match between requests and responses in stream %s\n" % (stream['num']))                      
+                             #requests
+                             i = 0
+                             while i < request_list_len:
+                                 f = open('%s.request.%s.raw' % (stream['file_format'], i) , 'w')
+                                 f.write(stream['request_list'][i])
+                                 f.close()
+                                 i = i + 1
+
+                             #responses                             
+                             i = 0
+                             while i < response_list_len:
+                                 f = open('%s.response.%s.raw' % (stream['file_format'], i) , 'w')
+                                 f.write(stream['response_list'][i])
+                                 f.close()
+                                 i = i + 1
+                         
                 elif options.file_format == "raw":
                         request = fp.parse_raw_request_from_file(options,test)
                            
@@ -282,6 +383,7 @@ if __name__ == "__main__":
                                     (ironbee_test_dict[test_entry]['matches']['file_matches'][file_match]['file_contents'],ironbee_test_dict[test_entry]['matches']['file_matches'][file_match]['position']) = read_file_from_offset_and_update(options,file_match,ironbee_test_dict[test_entry]['matches']['file_matches'][file_match]['position'])
                                     if ironbee_test_dict[test_entry]['matches']['file_matches'][file_match]['format'] == "ironbee_audit_log_index":
                                         tmp_file = fp.file_from_audit_log_index_line(options,file_match,ironbee_test_dict[test_entry]['matches']['file_matches'][file_match]['file_contents'])
+                                        ironbee_test_dict[test_entry]['matches']['file_matches'][file_match]['ironbee_audit_log_real'] = tmp_file
                                         try:
                                             ironbee_test_dict[test_entry]['matches']['file_matches'][file_match]['file_contents'] = open(tmp_file).read()
                                         except:
@@ -305,7 +407,11 @@ if __name__ == "__main__":
                                                    options.log.debug("match of %s found in %s" % (match,file_match))
                                                else:
                                                    ironbee_test_results[test_entry]['result'] = False
-                                                   ironbee_test_results[test_entry]['failure_reason'] = "failed to match %s:%s needed by test %s in file %s" % (match,type,file_match,test_entry)
+                                                   if ironbee_test_dict[test_entry]['matches']['file_matches'][file_match].has_key('ironbee_audit_log_real'):
+                                                       
+                                                       ironbee_test_results[test_entry]['failure_reason'] = "failed to match %s:%s needed by test %s in file %s" % (match,type,file_match,ironbee_test_dict[test_entry]['matches']['file_matches'][file_match]['ironbee_audit_log_real'])
+                                                   else:
+                                                       ironbee_test_results[test_entry]['failure_reason'] = "failed to match %s:%s needed by test %s in file %s" % (match,type,file_match,test_entry)
                                                    
                                                    #Restart Apache
                                                    if ironbee_test_dict[test_entry].has_key('local_apache'):

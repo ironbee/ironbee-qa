@@ -45,6 +45,13 @@ def glob_2_file_list(glob_list):
 def deepdict():
     return defaultdict(deepdict)
 
+# http://code.activestate.com/recipes/65219-ip-address-conversion-functions/ PSF lic.
+# IP address manipulation functions
+def dottedQuadToNum(ip):
+    "convert decimal dotted quad string to long integer"
+    hexn = ''.join(["%02X" % long(i) for i in ip.split('.')])
+    return long(hexn, 16)
+
 #encode using python quote encoding
 def encode_quote(options,string):
     try:
