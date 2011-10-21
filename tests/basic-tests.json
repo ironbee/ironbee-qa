@@ -423,7 +423,7 @@
     },
     "test19": {
         "description": "Test of DebugLogLevel Default",
-        "enabled": "True",
+        "enabled": "False",
         "normalize":"False",
         "local_apache":{
             "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test19.in"
