@@ -257,7 +257,7 @@ class FileParser:
                 if((request_list_len > 0) or (response_list_len > 0)):           
                     self.http_stream_list.append(tmp_dict.copy())
             except:
-                options.log.error("failed to parse stream data for file" % (self.filename))
+                self.log.error("failed to parse stream data for file %s %s:%s -> %s:%s %s" % (self.filename, src ,sport , dst, dport, self.stream_hash[stream_hash_val]))
 
     #Parse a pcap file using libnids
     def parse_pcap(self,options,file):
@@ -271,6 +271,7 @@ class FileParser:
         self.stream_hash = {} 
         self.stream_count = 0
         self.filename = os.path.basename(file) 
+        self.log = options.log
         if options.pcap_bpf != None:
             nids.param("pcap_filter", options.pcap_bpf)
             
@@ -283,7 +284,7 @@ class FileParser:
         except nids.error, e:
             options.log.error("nids/pcap error:" % (e))
         except Exception, e:
-            options.log.error("misc. exception (runtime error in user callback?):" % (e))
+            options.log.error("misc. exception (runtime error in user callback?):%s" % (e))
         return self.http_stream_list
 
     def parse_ironbee_mime_headers(self,header_lines):

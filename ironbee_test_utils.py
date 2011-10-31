@@ -701,4 +701,9 @@ def save_request(options,file,payload):
         options.log.debug("saved payload to file %s" % file)
     except:
         options.log.error("failed to save payload to file %s" % file)
-    
+
+#http://code.activestate.com/recipes/52306-to-sort-a-dictionary/
+def sortedDictValues1(adict):
+    items = adict.items()
+    items.sort()
+    return [value for key, value in items]    

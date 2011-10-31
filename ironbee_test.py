@@ -106,7 +106,8 @@ if __name__ == "__main__":
     #     options.match_list = None
 
     master_results_list = []
-    ironbee_test_results = deepdict()
+    #ironbee_test_results = deepdict()
+    ironbee_test_results = {} 
     ivanr_test_results = deepdict()
  
     #support user specified request via cli.. "I said across her nose not up it..."
@@ -375,8 +376,10 @@ if __name__ == "__main__":
                         parsed_response = send_request(options,parsed_request)
                        
                         #Do some matching
+                        ironbee_test_results[test_entry] = {}
                         ironbee_test_results[test_entry]['result'] = True
                         ironbee_test_results[test_entry]['description'] = ironbee_test_dict[test_entry]['description']
+                        ironbee_test_results[test_entry]['id'] = test_entry 
                         if ironbee_test_dict[test_entry]['matches'].has_key('file_matches'):
                             for file_match in ironbee_test_dict[test_entry]['matches']['file_matches']:
                                 if os.path.exists(file_match):
@@ -498,7 +501,7 @@ if __name__ == "__main__":
     if len(ironbee_test_results) > 0:    
         ironbee_test_cntr = {}
         print "\n"
-        print "IronBee Test Results".center(60, '=')          
+        print "IronBee Test Results".center(60, '=')
         for test_entry in ironbee_test_results:
             if not  ironbee_test_cntr.has_key('pass_cnt'):
                 ironbee_test_cntr['pass_cnt'] = 0

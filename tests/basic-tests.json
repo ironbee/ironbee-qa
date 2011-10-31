@@ -164,7 +164,7 @@
                 "server_root/logs/error.log": {
                     "format" : "text",
                     "re": [
-                        "(?sm)^.+\\[emerg\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s0"
+                        "(?sm)^.+\\[emerg\\]\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s0"
                     ],
                     "re_negated": [
                         "\\sTestLogLevel\\s[1-9]"
@@ -186,8 +186,8 @@
                 "server_root/logs/error.log": {
                     "format" : "text",
                     "re": [
-                        "(?sm)^.+\\[emerg\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s0",
-                        "(?sm)^.+\\[alert\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s1"
+                        "(?sm)^.+\\[emerg\\]\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s0",
+                        "(?sm)^.+\\[alert\\]\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s1"
                     ],
                     "re_negated": [
                         "\\sTestLogLevel\\s[2-9]"
@@ -210,9 +210,9 @@
                 "server_root/logs/error.log": {
                     "format" : "text",
                     "re": [
-                        "(?sm)^.+\\[emerg\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s0",
-                        "(?sm)^.+\\[alert\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s1",
-                        "(?sm)^.+\\[error\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s2"
+                        "(?sm)^.+\\[emerg\\]\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s0",
+                        "(?sm)^.+\\[alert\\]\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s1",
+                        "(?sm)^.+\\[error\\]\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s2"
                     ],
                     "re_negated": [
                         "\\sTestLogLevel\\s[3-9]"
@@ -234,10 +234,10 @@
                 "server_root/logs/error.log": {
                     "format" : "text",
                     "re": [
-                        "(?sm)^.+\\[emerg\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s0",
-                        "(?sm)^.+\\[alert\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s1",
-                        "(?sm)^.+\\[error\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s2",
-                        "(?sm)^.+\\[warn\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s3"
+                        "(?sm)^.+\\[emerg\\]\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s0",
+                        "(?sm)^.+\\[alert\\]\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s1",
+                        "(?sm)^.+\\[error\\]\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s2",
+                        "(?sm)^.+\\[warn\\]\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s3"
                     ],
                     "re_negated": [
                         "\\sTestLogLevel\\s[4-9]"
@@ -260,11 +260,11 @@
                 "server_root/logs/error.log": {
                     "format" : "text",
                     "re": [
-                        "(?sm)^.+\\[emerg\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s0",
-                        "(?sm)^.+\\[alert\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s1",
-                        "(?sm)^.+\\[error\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s2",
-                        "(?sm)^.+\\[warn\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s3",
-                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s4"
+                        "(?sm)^.+\\[emerg\\]\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s0",
+                        "(?sm)^.+\\[alert\\]\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s1",
+                        "(?sm)^.+\\[error\\]\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s2",
+                        "(?sm)^.+\\[warn\\]\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s3",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s4"
                     ],
                     "re_negated": [
                         "\\sTestLogLevel\\s[5-9]"
@@ -287,12 +287,12 @@
                 "server_root/logs/error.log": {
                     "format" : "text",
                     "re": [
-                        "(?sm)^.+\\[emerg\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s0",
-                        "(?sm)^.+\\[alert\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s1",
-                        "(?sm)^.+\\[error\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s2",
-                        "(?sm)^.+\\[warn\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s3",
-                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s4",
-                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s5"
+                        "(?sm)^.+\\[emerg\\]\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s0",
+                        "(?sm)^.+\\[alert\\]\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s1",
+                        "(?sm)^.+\\[error\\]\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s2",
+                        "(?sm)^.+\\[warn\\]\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s3",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s4",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s5"
                     ],
                     "re_negated": [
                         "\\sTestLogLevel\\s[6-9]"
@@ -315,13 +315,13 @@
                 "server_root/logs/error.log": {
                     "format" : "text",
                     "re": [
-                        "(?sm)^.+\\[emerg\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s0",
-                        "(?sm)^.+\\[alert\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s1",
-                        "(?sm)^.+\\[error\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s2",
-                        "(?sm)^.+\\[warn\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s3",
-                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s4",
-                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s5",
-                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s6"
+                        "(?sm)^.+\\[emerg\\]\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s0",
+                        "(?sm)^.+\\[alert\\]\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s1",
+                        "(?sm)^.+\\[error\\]\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s2",
+                        "(?sm)^.+\\[warn\\]\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s3",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s4",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s5",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s6"
                     ],
                     "re_negated": [
                         "\\sTestLogLevel\\s[7-9]"
@@ -344,14 +344,14 @@
                 "server_root/logs/error.log": {
                     "format" : "text",
                     "re": [
-                        "(?sm)^.+\\[emerg\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s0",
-                        "(?sm)^.+\\[alert\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s1",
-                        "(?sm)^.+\\[error\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s2",
-                        "(?sm)^.+\\[warn\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s3",
-                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s4",
-                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s5",
-                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s6",
-                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s7"
+                        "(?sm)^.+\\[emerg\\]\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s0",
+                        "(?sm)^.+\\[alert\\]\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s1",
+                        "(?sm)^.+\\[error\\]\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s2",
+                        "(?sm)^.+\\[warn\\]\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s3",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s4",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s5",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s6",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s7"
                     ],
                     "re_negated": [
                         "\\sTestLogLevel\\s[8-9]"
@@ -374,15 +374,15 @@
                 "server_root/logs/error.log": {
                     "format" : "text",
                     "re": [
-                        "(?sm)^.+\\[emerg\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s0",
-                        "(?sm)^.+\\[alert\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s1",
-                        "(?sm)^.+\\[error\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s2",
-                        "(?sm)^.+\\[warn\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s3",
-                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s4",
-                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s5",
-                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s6",
-                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s7",
-                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s8"
+                        "(?sm)^.+\\[emerg\\]\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s0",
+                        "(?sm)^.+\\[alert\\]\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s1",
+                        "(?sm)^.+\\[error\\]\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s2",
+                        "(?sm)^.+\\[warn\\]\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s3",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s4",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s5",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s6",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s7",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s8"
                     ],
                     "re_negated": [
                         "\\sTestLogLevel\\s9"
@@ -405,16 +405,16 @@
                 "server_root/logs/error.log": {
                     "format" : "text",
                     "re": [
-                        "(?sm)^.+\\[emerg\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s0",
-                        "(?sm)^.+\\[alert\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s1",
-                        "(?sm)^.+\\[error\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s2",
-                        "(?sm)^.+\\[warn\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s3",
-                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s4",
-                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s5",
-                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s6",
-                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s7",
-                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s8",
-                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s9"
+                        "(?sm)^.+\\[emerg\\]\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s0",
+                        "(?sm)^.+\\[alert\\]\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s1",
+                        "(?sm)^.+\\[error\\]\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s2",
+                        "(?sm)^.+\\[warn\\]\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s3",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s4",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s5",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s6",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s7",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s8",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s9"
                     ]
                 }
             }
@@ -433,11 +433,11 @@
                 "server_root/logs/error.log": {
                     "format" : "text",
                     "re": [
-                        "(?sm)^.+\\[emerg\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s0",
-                        "(?sm)^.+\\[alert\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s1",
-                        "(?sm)^.+\\[error\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s2",
-                        "(?sm)^.+\\[warn\\]\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s3",
-                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\sLuaFFI\\s-\\sTestLogLevel\\s4"
+                        "(?sm)^.+\\[emerg\\]\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s0",
+                        "(?sm)^.+\\[alert\\]\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s1",
+                        "(?sm)^.+\\[error\\]\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s2",
+                        "(?sm)^.+\\[warn\\]\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s3",
+                        "(?sm)^.+\\[debug\\].+\\sIronBee\\:\\s\\[\\d+\\]\\sLuaFFI\\s-\\sTestLogLevel\\s4"
                     ],
                     "re_negated": [
                         "\\sTestLogLevel\\s[5-9]"
@@ -459,8 +459,8 @@
             "file_matches": {
                 "server_root/logs/error.log": {
                     "format" : "text",
-                     "simple" : [
-                         "[error] IronBee: ERROR - Failed to load module \"Abel.so\""
+                     "re" : [
+                         "(?sm)^.+\\[error\\]\\sIronBee\\:\\s\\[\\d+\\]\\sERROR\\s\\-\\sFailed\\sto\\sload\\smodule\\s\\\"Abel\\.so\\\""
                      ]
                 }
             }
@@ -557,8 +557,8 @@
             "file_matches": {
                     "server_root/logs/error.log": {
                     "format" : "text",
-                    "simple": [
-                        "IronBee: ERROR - Invalid AuditLogParts option: AggievillePBR"
+                    "re": [
+                        "(?sm)^.+\\sIronBee\\:\\s\\[\\d+\\]\\sERROR\\s\\-\\sInvalid\\sAuditLogParts\\soption\\:\\sAggievillePBR"
                     ]
                 }
             }
