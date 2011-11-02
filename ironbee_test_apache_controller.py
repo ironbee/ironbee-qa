@@ -22,6 +22,7 @@ import time
 import signal
 import shutil
 import glob
+import platform
 
 def parse_apache_base_config(options,file):
     new_lines = []
@@ -79,17 +80,34 @@ def parse_apache_vars(options):
         tmp_apache_list2 = var_entry.split(":")
         tmp_apache_dict[tmp_apache_list2[0].replace(' ','')] = tmp_apache_list2[1]
 
+
     #Current Working Dir
     if tmp_apache_dict.has_key('@CWD@'):
         options.apache_vars['@CWD@'] =  tmp_apache_dict['@CWD@']
     else:    
         options.apache_vars['@CWD@'] = "%s" % (os.getcwd())
+
+    #Apache bin 
+    if tmp_apache_dict.has_key('@APACHE_HTTPD_BIN@'):
+        options.apache_vars['@APACHE_HTTPD_BIN@'] =  tmp_apache_dict['@APACHE_HTTPD_BIN@']
+    else:
+        try:
+            linux_dist =  platform.dist()
+            if re.search(r'(fedora|redhat)', linux_dist[0], re.IGNORECASE) != None:
+                options.apache_vars['@APACHE_HTTPD_BIN@'] = "/usr/sbin/httpd"
+            elif platform.system() == "FreeBSD":
+                options.apache_vars['@APACHE_HTTPD_BIN@'] = "/usr/local/sbin/httpd"
+            else:
+                #set to (Ubuntu|debain) as default?
+                options.apache_vars['@APACHE_HTTPD_BIN@'] = "/usr/sbin/apache2"
+        except:
+            options.apache_vars['@APACHE_HTTPD_BIN@'] = "/usr/sbin/apache2"
            
     #Apache Server Root
     if tmp_apache_dict.has_key('@IRONBEE_SERVERROOT_DIR@'):
         options.apache_vars['@IRONBEE_SERVERROOT_DIR@'] =  tmp_apache_dict['@IRONBEE_SERVERROOT_DIR@']
     else:    
-        options.apache_vars['@IRONBEE_SERVERROOT_DIR@'] = "%s/server_root" % (os.getcwd())
+        options.apache_vars['@IRONBEE_SERVERROOT_DIR@'] = "%s/apache_httpd_server_root" % (os.getcwd())
 
     #Apache Log Directory
     if tmp_apache_dict.has_key('@IRONBEE_LOGS_DIR@'):
@@ -101,7 +119,17 @@ def parse_apache_vars(options):
     if tmp_apache_dict.has_key('@APXS_LIBEXECDIR@'):
         options.apache_vars['@APXS_LIBEXECDIR@'] =  tmp_apache_dict['@APXS_LIBEXECDIR@']
     else:
-        options.apache_vars['@APXS_LIBEXECDIR@'] = "/usr/lib/apache2/modules"
+        try:
+            linux_dist =  platform.dist()
+            if re.search(r'(fedora|redhat)', linux_dist[0], re.IGNORECASE) != None:
+                options.apache_vars['@APXS_LIBEXECDIR@'] = "/etc/httpd/modules"
+            elif platform.system() == "FreeBSD":
+                options.apache_vars['@APXS_LIBEXECDIR@'] = "/usr/local/libexec/apache22/"
+            else:
+                #set to (Ubuntu|debain) as default?
+                options.apache_vars['@APXS_LIBEXECDIR@'] = "/usr/lib/apache2/modules" 
+        except:
+            options.apache_vars['@APXS_LIBEXECDIR@'] = "/usr/lib/apache2/modules"
 
     #Apache Document Root
     if tmp_apache_dict.has_key('@IRONBEE_DOCROOT_DIR@'):
@@ -231,7 +259,7 @@ def apache_start(options):
     parse_apache_vars(options)
     parse_ironbee_base_config(options,'%s' % options.apache_vars['@IRONBEE_CONF_TEMPLATE@'])
     parse_apache_base_config(options,'%s' % options.apache_vars['@APACHE_HTTPD_CONF_TEMPLATE@'])
-    cmd = "ulimit -c unlimited; apache2 -d %s -f %s -c \"Listen %s:%s\" -k start" % (options.apache_vars['@IRONBEE_SERVERROOT_DIR@'],options.apache_vars['@APACHE_HTTPD_CONF@'],options.host,options.port)
+    cmd = "ulimit -c unlimited; %s -d %s -f %s -c \"Listen %s:%s\" -k start" % (options.apache_vars['@APACHE_HTTPD_BIN@'],options.apache_vars['@IRONBEE_SERVERROOT_DIR@'],options.apache_vars['@APACHE_HTTPD_CONF@'],options.host,options.port)
     (returncode, stdout, stderr) = cmd_wrapper(options,cmd,False)
     time.sleep(2)
     if returncode != 0:
@@ -284,7 +312,7 @@ def apache_check_for_core(options):
             f.write('set height 0\nset logging file %s.core.gdb.txt\nset logging on\nbt full\ninfo threads\nquit' % (options.current_req_id))
             f.close()
         
-            cmd = "gdb -x gdb_commands.txt apache2 %s" % (core_file)   
+            cmd = "gdb -x gdb_commands.txt %s %s" % (options.apache_vars['@APACHE_HTTPD_BIN@'],core_file)   
             (returncode, stdout, stderr) = cmd_wrapper(options,cmd,False)
             time.sleep(2)
             if returncode != 0:
