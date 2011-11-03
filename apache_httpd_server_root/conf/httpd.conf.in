@@ -11,11 +11,16 @@ ScoreBoardFile @IRONBEE_LOGS_DIR@/httpd.scoreboard
 <IfModule !mod_unique_id.c>
 	LoadModule unique_id_module @APXS_LIBEXECDIR@/mod_unique_id.so
 </IfModule>
-
+<IfModule !mod_log_config.c>
+        LoadModule log_config_module @APXS_LIBEXECDIR@/mod_log_config.so
+</IfModule>
+<IfModule !mod_logio.c>
+        LoadModule logio_module @APXS_LIBEXECDIR@/mod_logio.so
+</IfModule>
 # TODO: Need to have these configurable
-LoadFile /usr/lib/libxml2.so
-LoadFile /usr/local/lib/libhtp.so
-LoadModule ironbee_module /usr/local/ironbee/lib/mod_ironbee.so
+LoadFile @LIBXML2_SO_PATH@ 
+LoadFile @LIB_HTP_SO_PATH@ 
+LoadModule ironbee_module @APACHE_HTTPD_MOD_IRONBEE_SO@ 
 
 <IfModule ironbee_module>
    LogLevel debug

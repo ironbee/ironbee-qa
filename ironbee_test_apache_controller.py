@@ -87,6 +87,37 @@ def parse_apache_vars(options):
     else:    
         options.apache_vars['@CWD@'] = "%s" % (os.getcwd())
 
+    #Libxml2
+    if tmp_apache_dict.has_key('@LIBXML2_SO_PATH@'):
+        options.apache_vars['@LIBXML2_SO_PATH@'] =  tmp_apache_dict['@LIBXML2_SO_PATH@']
+    else:
+        try:
+            linux_dist =  platform.dist()
+            arch = platform.architecture()
+            if re.search(r'(fedora|redhat)', linux_dist[0], re.IGNORECASE) != None:
+                if arch[0] == "64bit":
+                    options.apache_vars['@LIBXML2_SO_PATH@'] = "/usr/lib64/libxml2.so"
+                else:
+                    options.apache_vars['@LIBXML2_SO_PATH@'] = "/usr/lib/libxml2.so"
+            elif platform.system() == "FreeBSD":
+                options.apache_vars['@LIBXML2_SO_PATH@'] = "/usr/local/lib/libxml2.so"
+            else:
+                options.apache_vars['@LIBXML2_SO_PATH@'] = "/usr/lib/libxml2.so"
+        except:
+            options.apache_vars['@LIBXML2_SO_PATH@'] = "/usr/lib/libxml2.so"
+
+    #LibHTP
+    if tmp_apache_dict.has_key('@LIBHTP_SO_PATH@'):
+        options.apache_vars['@LIBHTP_SO_PATH@'] =  tmp_apache_dict['@LIBHTP_SO_PATH@']
+    else:
+        options.apache_vars['@LIB_HTP_SO_PATH@'] = "/usr/local/lib/libhtp.so"
+
+    #IronBee HTTPD Module
+    if tmp_apache_dict.has_key('@APACHE_HTTPD_MOD_IRONBEE_SO@'):
+        options.apache_vars['@APACHE_HTTPD_MOD_IRONBEE_SO@'] =  tmp_apache_dict['@APACHE_HTTPD_MOD_IRONBEE_SO@']
+    else:
+        options.apache_vars['@APACHE_HTTPD_MOD_IRONBEE_SO@'] = "/usr/local/ironbee/lib/mod_ironbee.so"
+
     #Apache bin 
     if tmp_apache_dict.has_key('@APACHE_HTTPD_BIN@'):
         options.apache_vars['@APACHE_HTTPD_BIN@'] =  tmp_apache_dict['@APACHE_HTTPD_BIN@']
@@ -122,6 +153,7 @@ def parse_apache_vars(options):
         try:
             linux_dist =  platform.dist()
             if re.search(r'(fedora|redhat)', linux_dist[0], re.IGNORECASE) != None:
+                options.log.debug("OS detection found RedHat")
                 options.apache_vars['@APXS_LIBEXECDIR@'] = "/etc/httpd/modules"
             elif platform.system() == "FreeBSD":
                 options.apache_vars['@APXS_LIBEXECDIR@'] = "/usr/local/libexec/apache22/"
