@@ -26,6 +26,7 @@ from optparse import OptionParser
 from ironbee_test_file_parser import *
 from ironbee_test_logging import *
 from ironbee_test_apache_controller import *
+import shutil
 
 sub_n_rn=True
 send_header=True
@@ -84,7 +85,13 @@ if __name__ == "__main__":
 
     #Optional BPF to apply when parsing pcaps
     parser.add_option("--convert-2-raw-parts", dest="convert_2_raw_parts", help="optional list of parts you want to print when converting from some other format to raw. avaliable options are request,response, request_line, request_method,")
-    
+
+    #Path to IronBee cli tool
+    parser.add_option("--ibcli-bin", dest="ibcli_bin", type="string", help="path the the ironbee cli tool")
+
+    #IronBee cli config
+    parser.add_option("--ibcli-conf", dest="ibcli_conf", type="string", help="path to the ironbee config file to use with the IronBee cli tool")
+ 
     #parse the opts
     (options, args) = parser.parse_args()
     
@@ -258,6 +265,42 @@ if __name__ == "__main__":
                                  f.write(stream['response_list'][i])
                                  f.close()
                                  i = i + 1
+
+                elif options.file_format == "pcap2ibcli":
+                    if options.ibcli_bin == None:
+                        options.log.error("You must specify a path to the IronBee cli tool via --ibcli-bin") 
+                        sys.exit(-1)
+
+                    if options.ibcli_conf == None:
+                        options.log.error("You must specify a path to the IronBee cli tool via --ibcli-conf") 
+                        sys.exit(-1)
+ 
+                    stream_list = fp.parse_pcap(options,test)
+                    for stream in stream_list:
+                         request_list_len = len(stream['request_list'])
+                         response_list_len = len(stream['response_list'])
+
+                         if(request_list_len == response_list_len):
+                             i = 0
+                             while i < request_list_len:
+                                 #request
+                                 f = open('tmp.request.raw', 'w')
+                                 f.write(stream['request_list'][i])
+                                 f.close()
+                                 #response
+                                 f = open('tmp.response.raw', 'w')
+                                 f.write(stream['response_list'][i])
+                                 f.close()
+
+                                 (returncode, stdout, stderr) = cmd_wrapper(options, "ulimit -c unlimited; %s --conf %s --request=tmp.request.raw --response=tmp.response.raw" % (options.ibcli_bin, options.ibcli_conf), False)
+                                 options.log.debug(stderr)
+                                 core_dump = check_for_core_dumps(options,'%s/core*' % (os.getcwd()))
+                                 if core_dump != None:
+                                     process_core_dump(options, core_dump, options.ibcli_bin, stream['file_format'])
+                                     shutil.move("tmp.request.raw","%s.coredump.request.raw" % (stream['file_format']))
+                                     shutil.move("tmp.response.raw","%s.coredump.response.raw" % (stream['file_format']))
+                                 i = i + 1
+
 
                 elif options.file_format == "tshark":
                     stream_list = fp.tshark_parse_pcap(options,test)

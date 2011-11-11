@@ -30,6 +30,7 @@ import subprocess
 import re
 import StringIO
 import gzip
+import shutil
 
 def glob_2_file_list(glob_list):
     import glob
@@ -707,3 +708,32 @@ def sortedDictValues1(adict):
     items = adict.items()
     items.sort()
     return [value for key, value in items]    
+
+def check_for_core_dumps(options, core_dump_glob):
+    import glob
+    core_file_list = glob.glob(core_dump_glob)
+    if len(core_file_list) == 1:
+        options.log.debug('core dump found %s' % (core_file_list[0]))
+        return core_file_list[0]
+    elif len(core_file_list) > 1:
+        options.log.error('more than one core dump found please remove old core dumps before continuing')
+        return None
+    elif len(core_file_list) == 0:
+        options.log.debug('no core dumps found')
+        return None
+    else:
+        return None
+
+def process_core_dump(options, core_file, binary, core_file_name_format):
+    #create gdb commands file
+    f=open('gdb_commands.txt','w')
+    f.write('set height 0\nset logging file %s.gdb.coredump.out.txt\nset logging on\nbt full\ninfo threads\nquit' % (core_file_name_format))
+    f.close()
+
+    #run it
+    cmd = "gdb -x gdb_commands.txt %s %s" % (binary,core_file)
+    (returncode, stdout, stderr) = cmd_wrapper(options,cmd,False)
+    time.sleep(2)
+    shutil.move(core_file,"%s.coredump" % (core_file_name_format))
+    return
+

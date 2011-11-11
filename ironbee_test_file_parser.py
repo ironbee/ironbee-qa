@@ -252,13 +252,19 @@ class FileParser:
                 response_list_len = len(tmp_dict['response_list'])
  
                 if (request_list_len != response_list_len):
-                    options.log.error("request_list length %d not equal to response_list length %d\n" % (request_list_len,response_list_len))  
+                    self.log.error("request_list length %d not equal to response_list length %d\n" % (request_list_len,response_list_len))  
                 
                 if((request_list_len > 0) or (response_list_len > 0)):           
                     self.http_stream_list.append(tmp_dict.copy())
-            except:
-                self.log.error("failed to parse stream data for file %s %s:%s -> %s:%s %s" % (self.filename, src ,sport , dst, dport, self.stream_hash[stream_hash_val]))
-
+            except Exception as e:
+                self.log.error("failed to parse stream data error:%s for file %s %s:%s -> %s:%s %s\n%s\n%s\n" % (e, self.filename, src ,sport , dst, dport, self.stream_hash[stream_hash_val], toserver, toclient))
+                f = open('%s-parse-failure-src-%s-%s-dst-%s-%s-streamnum-%s' % (self.filename, src ,sport , dst, dport, self.stream_hash[stream_hash_val]), 'w')
+                if toserver != None:
+                    f.write(toserver)
+                if toclient != None:
+                    f.write(toclient)
+                f.close()
+                
     #Parse a pcap file using libnids
     def parse_pcap(self,options,file):
         try:
