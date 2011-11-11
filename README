@@ -40,6 +40,10 @@ python ./ironbee_test.py  --one-shot="GET / HTTP/1.1\r\nHost: foo\r\n\r\n" --hos
 #Note: Will also split out traffic into PDML, PCAP format using the same naming convention.
 ./ironbee_test.py --file-glob=/home/coz/sqlmap.pcap --console-log-level=error --file-format=tshark2raw --no-normalize
 
+#Read PCAP and convert to raw requests using LibNIDS. Proccess requests one at a time with the IronBee CLI tool.
+./ironbee_test.py --file-glob=netsparkercommunity.pcap --console-log-level=error --file-format=pcap2ibcli --no-normalize --ibcli-bin=/usr/local/ironbee/bin/ibcli --ibcli-conf=/usr/local/ironbee/conf/ironbee.conf.example
+
 #Judy Evasions
 sudo ./ironbee_test.py  --one-shot="GET / HTTP/1.1\r\nHost: smart.people.on.ice\r\n\r\n" --host="172.18.101.100" --port=80 --send-mode="jnovak_send_rst_bad_chksum"
+
 
