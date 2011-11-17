@@ -292,7 +292,7 @@ if __name__ == "__main__":
                                  f.write(stream['response_list'][i])
                                  f.close()
 
-                                 (returncode, stdout, stderr) = cmd_wrapper(options, "ulimit -c unlimited; %s --conf %s --request=tmp.request.raw --response=tmp.response.raw" % (options.ibcli_bin, options.ibcli_conf), False)
+                                 (returncode, stdout, stderr) = cmd_wrapper(options, "ulimit -c unlimited; %s --conf %s --request=tmp.request.raw --response=tmp.response.raw --local-ip=%s --local-port=%s --remote-ip=%s --remote-port=%s " % (options.ibcli_bin, options.ibcli_conf, stream['dst'], stream['dport'], stream['src'], stream['sport']), False)
                                  options.log.debug(stderr)
                                  core_dump = check_for_core_dumps(options,'%s/core*' % (os.getcwd()))
                                  if core_dump != None:
@@ -561,7 +561,11 @@ if __name__ == "__main__":
             print "Summary".center(60, '=') 
             print "Pass".ljust(40, ' '),ironbee_test_cntr['pass_cnt']
             print "Fail".ljust(40, ' '),ironbee_test_cntr['fail_cnt']       
-    
+            
+            if ironbee_test_cntr['fail_cnt'] > 0: 
+                if options.local_apache:
+                    apache_stop(options)
+                sys.exit(-1)
     #If we have ivanr_test_results print them
     if len(ivanr_test_results) > 0:    
         print "IvanR Test Results".center(60, '=')
