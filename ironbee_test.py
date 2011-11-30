@@ -25,7 +25,7 @@ from urlparse import *
 from optparse import OptionParser
 from ironbee_test_file_parser import *
 from ironbee_test_logging import *
-from ironbee_test_apache_controller import *
+from ironbee_test_apache_httpd_controller import *
 import shutil
 
 sub_n_rn=True
@@ -39,9 +39,9 @@ if __name__ == "__main__":
     parser.add_option("--host", dest="host", default="127.0.0.1",type="string", help="host we will be testing defaults to 127.0.0.1")
     #port on host to connect to
     parser.add_option("--port", dest="port", default=9931, type="int", help="port on the host we will be testing defaults to 9931")
-    #Start Apache
-    parser.add_option("--local-apache", dest="local_apache",action="store_true", default=False, help="If this option is specified it will start a local apache server using the ip address and port specified with --host --port options defaults to 127.0.0.1:9931")
-    parser.add_option("--apache-vars", dest="apache_var_string",default="@CWD@:%s,@IRONBEE_TESTS_DIR@:%s/tests,@IRONBEE_CONF_TEMPLATE@:%s/apache_httpd_server_root/conf/ironbee.conf.in,@APACHE_HTTPD_CONF_TEMPLATE@:%s/apache_httpd_server_root/conf/httpd.conf.in,@IRONBEE_SERVERROOT_DIR@:%s/apache_httpd_server_root,@IRONBEE_LOGS_DIR@:%s/apache_httpd_server_root/logs,@IRONBEE_DOCROOT_DIR@:%s/apache_httpd_server_root/htdocs,@IRONBEE_COREDUMP_DIR@:%s/apache_httpd_server_root/tmp" % (os.getcwd(),os.getcwd(),os.getcwd(),os.getcwd(),os.getcwd(),os.getcwd(),os.getcwd(),os.getcwd()), type="string", help="List of variable replacements for use in conjunction with --local-apache. Defautls are @CWD@:%s,@IRONBEE_TESTS_DIR@:%s/tests,@IRONBEE_CONF_TEMPLATE@:%s/apache_httpd_server_root/conf/ironbee.conf.in,@APACHE_HTTPD_CONF_TEMPLATE@:%s/apache_httpd_server_root/conf/httpd.conf.in,@IRONBEE_SERVERROOT_DIR@:%s/apache_httpd_server_root,@IRONBEE_LOGS_DIR@:%s/apache_httpd_server_root/logs,@APXS_LIBEXECDIR@:/usr/lib/apache2/modules,@IRONBEE_DOCROOT_DIR@:%s/apache_httpd_server_root/htdocs,@IRONBEE_COREDUMP_DIR@:%s/apache_httpd_server_root/tmp" % (os.getcwd(),os.getcwd(),os.getcwd(),os.getcwd(),os.getcwd(),os.getcwd(),os.getcwd(),os.getcwd()))
+    #Start Apache HTTPD
+    parser.add_option("--local-apache-httpd", dest="local_apache_httpd",action="store_true", default=False, help="If this option is specified it will start a local apache server using the ip address and port specified with --host --port options defaults to 127.0.0.1:9931")
+    parser.add_option("--apache-httpd-vars", dest="apache_httpd_var_string",default="@CWD@:%s,@IRONBEE_TESTS_DIR@:%s/tests,@IRONBEE_CONF_TEMPLATE@:%s/apache_httpd_server_root/conf/ironbee.conf.in,@APACHE_HTTPD_CONF_TEMPLATE@:%s/apache_httpd_server_root/conf/httpd.conf.in,@IRONBEE_SERVERROOT_DIR@:%s/apache_httpd_server_root,@IRONBEE_LOGS_DIR@:%s/apache_httpd_server_root/logs,@IRONBEE_DOCROOT_DIR@:%s/apache_httpd_server_root/htdocs,@IRONBEE_COREDUMP_DIR@:%s/apache_httpd_server_root/tmp" % (os.getcwd(),os.getcwd(),os.getcwd(),os.getcwd(),os.getcwd(),os.getcwd(),os.getcwd(),os.getcwd()), type="string", help="List of variable replacements for use in conjunction with --local-apache-httpd. Defautls are @CWD@:%s,@IRONBEE_TESTS_DIR@:%s/tests,@IRONBEE_CONF_TEMPLATE@:%s/apache_httpd_server_root/conf/ironbee.conf.in,@APACHE_HTTPD_CONF_TEMPLATE@:%s/apache_httpd_server_root/conf/httpd.conf.in,@IRONBEE_SERVERROOT_DIR@:%s/apache_httpd_server_root,@IRONBEE_LOGS_DIR@:%s/apache_httpd_server_root/logs,@APXS_LIBEXECDIR@:/usr/lib/apache2/modules,@IRONBEE_DOCROOT_DIR@:%s/apache_httpd_server_root/htdocs,@IRONBEE_COREDUMP_DIR@:%s/apache_httpd_server_root/tmp" % (os.getcwd(),os.getcwd(),os.getcwd(),os.getcwd(),os.getcwd(),os.getcwd(),os.getcwd(),os.getcwd()))
     #The way in which we will send the request defaults to raw socket
     parser.add_option("--send-mode", dest="send_mode", default="raw_socket",type="string", help="how we send the request urllib, raw_socket,jnovak_send_rst_bad_chksum,jnovak_send_overlap_bad_chksum,jnovak_send_bogus_ecn_flags,jnovak_sequence_wrap,jnovak_multiple_syns,jnovak_rst_syn_again,jnovak_syn_pushflag,jnovak_syn_urgflag")
     #By default we normalize all payloads. This will send the raw payload without attempting to parse it.
@@ -102,8 +102,8 @@ if __name__ == "__main__":
     options.response_match_types = ['status','proto','version','http_stat_code','http_stat_msg','headers','body','raw_response','status_line']    
     options.file_match_types = ['text','ironbee_audit_log_index']
     
-    if options.local_apache:
-        apache_start(options)
+    if options.local_apache_httpd:
+        apache_httpd_start(options)
         
     #Do optional output matching
     #if options.output_re_match or options.output_in_match:
@@ -133,8 +133,8 @@ if __name__ == "__main__":
         for response_part in parsed_response:
             options.log.debug("%s:\n\t%s" % (response_part,parsed_response[response_part]))
             
-            if options.local_apache:
-                apache_check_for_core(options) 
+            if options.local_apache_httpd:
+                apache_httpd_check_for_core(options) 
         
     elif options.file_glob:
         glob_list = glob_2_file_list(options.file_glob)
@@ -180,8 +180,8 @@ if __name__ == "__main__":
                             ivanr_test_results[test]['result'] = rule['result']
                             log.options.debug("file:%s result:%s pattern:none match:none" % (test,rule['result']))
                             break        
-                    if options.local_apache:
-                        apache_check_for_core(options)
+                    if options.local_apache_httpd:
+                        apache_httpd_check_for_core(options)
                         
                 elif options.file_format == "ironbee_audit_log":
                     audit_log_dict = fp.parse_ironbee_multi_part_mime(options,test)
@@ -191,8 +191,8 @@ if __name__ == "__main__":
                     for response_part in parsed_response:
                        options.log.debug("%s:\n\t%s" % (response_part,parsed_response[response_part]))
                        
-                    if options.local_apache:
-                        apache_check_for_core(options)
+                    if options.local_apache_httpd:
+                        apache_httpd_check_for_core(options)
                         
                 elif options.file_format == "ironbee_audit_log_index":
                     audit_log_index = fp.parse_ironbee_audit_log_index(options,test)
@@ -204,8 +204,8 @@ if __name__ == "__main__":
                         for response_part in parsed_response:
                            options.log.debug("%s:\n\t%s" % (response_part,parsed_response[response_part]))
                            
-                        if options.local_apache:
-                            apache_check_for_core(options)
+                        if options.local_apache_httpd:
+                            apache_httpd_check_for_core(options)
                             
                 elif options.file_format == "pcap":
                     stream_dict = fp.parse_pcap(options,test)
@@ -220,8 +220,8 @@ if __name__ == "__main__":
                                 for response_part in parsed_response:
                                     options.log.debug("%s:\n\t%s" % (response_part,parsed_response[response_part]))
                             
-                                if options.local_apache:
-                                    apache_check_for_core(options)
+                                if options.local_apache_httpd:
+                                    apache_httpd_check_for_core(options)
                         i = i + 1
 
                 elif options.file_format == "pcap2raw":
@@ -313,8 +313,8 @@ if __name__ == "__main__":
                                 for response_part in parsed_response:
                                     options.log.debug("%s:\n\t%s" % (response_part,parsed_response[response_part]))
 
-                                if options.local_apache:
-                                    apache_check_for_core(options)
+                                if options.local_apache_httpd:
+                                    apache_httpd_check_for_core(options)
 
                 elif options.file_format == "tshark2raw":
                     stream_list = fp.tshark_parse_pcap(options,test)
@@ -368,8 +368,8 @@ if __name__ == "__main__":
                         for response_part in parsed_response:
                             options.log.debug("%s:\n\t%s" % (response_part,parsed_response[response_part])) 
                         
-                        if options.local_apache:
-                            apache_check_for_core(options) 
+                        if options.local_apache_httpd:
+                            apache_httpd_check_for_core(options) 
                              
                 elif options.file_format == "modsec_audit_log":
                         modsec_req_dict = fp.modsec_audit_log(test)
@@ -380,13 +380,13 @@ if __name__ == "__main__":
                             for response_part in parsed_response:
                                 options.log.debug("%s:\n\t%s" % (response_part,parsed_response[response_part]))
                                 
-                            if options.local_apache:
-                                apache_check_for_core(options) 
+                            if options.local_apache_httpd:
+                                apache_httpd_check_for_core(options) 
                                 
                 elif options.file_format == "ironbee_test_file":
                     ironbee_test_dict = fp.ironbee_test_file(options,test)
                     for test_entry in ironbee_test_dict:
-                        save_apache_var_string = "" 
+                        save_apache_httpd_var_string = "" 
                          
                         #Read the request       
                         if ironbee_test_dict[test_entry].has_key('raw_request_from_file'):
@@ -406,14 +406,14 @@ if __name__ == "__main__":
                                 else:
                                     ironbee_test_dict[test_entry]['matches']['file_matches'][file_match]['position'] = 0
 
-                        #Deal with local Apache stuff
-                        if ironbee_test_dict[test_entry].has_key('local_apache'):
-                            if options.local_apache:
-                                apache_stop(options)
-                            if ironbee_test_dict[test_entry]['local_apache'].has_key('apache_vars'):
-                                save_apache_var_string = options.apache_var_string
-                                options.apache_var_string = ironbee_test_dict[test_entry]['local_apache']['apache_vars']
-                            apache_start(options)                        
+                        #Deal with local Apache HTTPD stuff
+                        if ironbee_test_dict[test_entry].has_key('local_apache_httpd'):
+                            if options.local_apache_httpd:
+                                apache_httpd_stop(options)
+                            if ironbee_test_dict[test_entry]['local_apache_httpd'].has_key('apache_httpd_vars'):
+                                save_apache_httpd_var_string = options.apache_httpd_var_string
+                                options.apache_httpd_var_string = ironbee_test_dict[test_entry]['local_apache_httpd']['apache_httpd_vars']
+                            apache_httpd_start(options)                        
                         
                         #Send that badboy        
                         parsed_response = send_request(options,parsed_request)
@@ -433,14 +433,6 @@ if __name__ == "__main__":
                                         try:
                                             ironbee_test_dict[test_entry]['matches']['file_matches'][file_match]['file_contents'] = open(tmp_file).read()
                                         except:
-                                            #if we fail to read file maybe we should just set to nothing
-                                            
-                                            #ironbee_test_results[test_entry]['result'] = False
-                                            #ironbee_test_results[test_entry]['failure_reason'] = "failed to read audit_log from file %s using index of %s" % (tmp_file,file_match)
-                                                                                        #Restart Apache
-                                            #if ironbee_test_dict[test_entry].has_key('local_apache'):
-                                            #    apache_reset_and_restart(options,save_apache_var_string)
-                                            #break
                                             options.log.error("failed to read from audit_log file %s" % (tmp_file))
                                             ironbee_test_dict[test_entry]['matches']['file_matches'][file_match]['file_contents'] = ""
                                                                                          
@@ -460,16 +452,16 @@ if __name__ == "__main__":
                                                        ironbee_test_results[test_entry]['failure_reason'] = "failed to match %s:%s needed by test %s in file %s" % (match,type,file_match,test_entry)
                                                    
                                                    #Restart Apache
-                                                   if ironbee_test_dict[test_entry].has_key('local_apache'):
-                                                       apache_reset_and_restart(options,save_apache_var_string)
+                                                   if ironbee_test_dict[test_entry].has_key('local_apache_httpd'):
+                                                       apache_httpd_reset_and_restart(options,save_apache_httpd_var_string)
                                                    break                                                         
                                 else:
                                     ironbee_test_results[test_entry]['result'] = False
                                     ironbee_test_results[test_entry]['failure_reason'] = "failed to find file %s needed by test %s" % (file_match,test_entry)
                                     
                                     #Restart Apache
-                                    if ironbee_test_dict[test_entry].has_key('local_apache'):
-                                        apache_reset_and_restart(options,save_apache_var_string)
+                                    if ironbee_test_dict[test_entry].has_key('local_apache_httpd'):
+                                        apache_httpd_reset_and_restart(options,save_apache_httpd_var_string)
                                     break
                                 
                         if ironbee_test_dict[test_entry]['matches'].has_key('response_matches'):
@@ -485,20 +477,20 @@ if __name__ == "__main__":
                                                          ironbee_test_results[test_entry]['failure_reason'] = "failed to match %s:%s needed by test %s in response_part %s" % (match,type,response_part,test_entry)
                                                         
                                                          #Restart Apache
-                                                         if ironbee_test_dict[test_entry].has_key('local_apache'):
-                                                             apache_reset_and_restart(options,save_apache_var_string)
+                                                         if ironbee_test_dict[test_entry].has_key('local_apache_httpd'):
+                                                             apache_httpd_reset_and_restart(options,save_apache_httpd_var_string)
                                                          break                                                                                                
                                 else:
                                     ironbee_test_results[test_entry]['result'] = False
                                     ironbee_test_results[test_entry]['failure_reason'] = "failed to find response_part %s needed by test %s" % (response_part,test_entry)
                                    
-                                    #Restart Apache
-                                    if ironbee_test_dict[test_entry].has_key('local_apache'):
-                                        apache_reset_and_restart(options,save_apache_var_string)
+                                    #Restart Apache HTTPD
+                                    if ironbee_test_dict[test_entry].has_key('local_apache_httpd'):
+                                        apache_httpd_reset_and_restart(options,save_apache_httpd_var_string)
                                     break
-                        #Restart Apache
-                        if ironbee_test_dict[test_entry].has_key('local_apache'):
-                            apache_reset_and_restart(options,save_apache_var_string)
+                        #Restart Apache HTTPD
+                        if ironbee_test_dict[test_entry].has_key('local_apache_httpd'):
+                            apache_httpd_reset_and_restart(options,save_apache_httpd_var_string)
                                                               
                         for response_part in parsed_response:
                             options.log.debug("%s:\n\t%s" % (response_part,parsed_response[response_part]))   
@@ -523,8 +515,8 @@ if __name__ == "__main__":
                         parsed_request = parse_payload(options,options.host,options.port,request,True)
                         parsed_response = send_request(options,parsed_request)
 
-                        if options.local_apache:
-                           apache_check_for_core(options)
+                        if options.local_apache_httpd:
+                           apache_httpd_check_for_core(options)
  
                         #for response_part in parsed_response:
                             #options.log.debug("%s:\n\t%s" % (response_part,parsed_response[response_part]))
@@ -563,8 +555,8 @@ if __name__ == "__main__":
             print "Fail".ljust(40, ' '),ironbee_test_cntr['fail_cnt']       
             
             if ironbee_test_cntr['fail_cnt'] > 0: 
-                if options.local_apache:
-                    apache_stop(options)
+                if options.local_apache_httpd:
+                    apache_httpd_stop(options)
                 sys.exit(-1)
     #If we have ivanr_test_results print them
     if len(ivanr_test_results) > 0:    
@@ -577,7 +569,7 @@ if __name__ == "__main__":
     #    for line in options.match_list:
     #        options.log.debug(line)
 
-    if options.local_apache:
-        apache_stop(options)
+    if options.local_apache_httpd:
+        apache_httpd_stop(options)
         
     options.log.debug("done")

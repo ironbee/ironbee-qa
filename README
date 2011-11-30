@@ -25,13 +25,13 @@ python ./ironbee_test.py --file-glob="/home/coz/db_tests" --host="172.18.100.105
 python ./ironbee_test.py  --one-shot="GET / HTTP/1.1\r\nHost: foo\r\n\r\n" --host="172.18.100.105" --port=80
 
 #One Shot with local apache server
-./ironbee_test.py  --local-apache --one-shot="GET /index.html HTTP/1.1\r\nHost: foo\r\n\r\n"
+./ironbee_test.py  --local-apache-httpd --one-shot="GET /index.html HTTP/1.1\r\nHost: foo\r\n\r\n"
 
 #One Shot test of apache without IronBee
-./ironbee_test.py --local-apache --apache-vars="@APACHE_HTTPD_CONF_TEMPLATE@:@CWD@/server_root/conf/httpd.noironbee.conf.in" --one-shot="GET / HTTP/1.0\r\n\r\n"
+./ironbee_test.py --local-apache-httpd --apache-httpd-vars="@APACHE_HTTPD_CONF_TEMPLATE@:@CWD@/apache_httpd_server_root/conf/httpd.noironbee.conf.in" --one-shot="GET / HTTP/1.0\r\n\r\n"
 
 #IronBee JSON test file format
-./ironbee_test.py --console-log-level="error" --local-apache --file-glob="tests/*.json" --file-format="ironbee_test_file"
+./ironbee_test.py --console-log-level="error" --local-apache-httpd --file-glob="tests/*.json" --file-format="ironbee_test_file"
 
 #Read PCAP and convert to raw requests using LibNIDS. Output format is input_filename-stream_num-src-sport-dst-dport.(request|response|merged).(request|response) number in stream.raw
 ./ironbee_test.py --file-glob=/home/coz/sqlmap.pcap --console-log-level=error --file-format=pcap2raw --no-normalize

@@ -2,7 +2,7 @@
     "test1": {
         "description": "Simple HTTP 1.0 request for /", 
         "enabled": "True",
-        "local_apache":{},
+        "local_apache_httpd":{},
         "matches": {
             "file_matches": {
                 "apache_httpd_server_root/logs/audit/auditlog.log": {
@@ -20,7 +20,7 @@
     "test2": {
         "description": "Simple HTTP 1.1 request for /",
         "enabled": "True",
-        "local_apache":{},
+        "local_apache_httpd":{},
         "matches": {
             "file_matches": {
                 "apache_httpd_server_root/logs/audit/auditlog.log": {
@@ -39,7 +39,7 @@
     "test3": {
         "description": "Simple HTTP 1.1 request for / method of PORKCHOPEXPRESS",
         "enabled": "True",
-        "local_apache":{},
+        "local_apache_httpd":{},
         "matches": {
             "file_matches": {
                 "apache_httpd_server_root/logs/audit/auditlog.log": {
@@ -59,7 +59,7 @@
         "description": "Simple HTTP 1.1 request for / tabs for spaces request line",
         "enabled": "True",
         "normalize":"False",
-        "local_apache":{},
+        "local_apache_httpd":{},
         "matches": {
             "file_matches": {
                 "apache_httpd_server_root/logs/audit/auditlog.log": {
@@ -79,7 +79,7 @@
         "description": "Simple HTTP 1.1 request for / vertical tabs for spaces request line",
         "enabled": "True",
         "normalize":"False",
-        "local_apache":{},
+        "local_apache_httpd":{},
         "matches": {
             "file_matches": {
                 "apache_httpd_server_root/logs/audit/auditlog.log": {
@@ -99,8 +99,8 @@
         "description": "Test of SensorId Directive",
         "enabled": "True",
         "normalize":"False",
-        "local_apache":{
-            "apache_vars" : "@IRONBEE_SENSOR_ID@:AAAABBBB-1111-2222-3333-FFFF00000044"
+        "local_apache_httpd":{
+            "apache_httpd_vars" : "@IRONBEE_SENSOR_ID@:AAAABBBB-1111-2222-3333-FFFF00000044"
         },    
         "matches": {
             "file_matches": {
@@ -118,8 +118,8 @@
         "description": "Test of SensorName Directive",
         "enabled": "True",
         "normalize":"False",
-        "local_apache":{
-            "apache_vars" : "@IRONBEE_SENSOR_NAME@:Trinity"
+        "local_apache_httpd":{
+            "apache_httpd_vars" : "@IRONBEE_SENSOR_NAME@:Trinity"
         },    
         "matches": {
             "file_matches": {
@@ -137,8 +137,8 @@
         "description": "Test of SensorHostname Directive",
         "enabled": "True",
         "normalize":"False",
-        "local_apache":{
-            "apache_vars" : "@IRONBEE_SENSOR_HOSTNAME@:operation.crossroads.baker"
+        "local_apache_httpd":{
+            "apache_httpd_vars" : "@IRONBEE_SENSOR_HOSTNAME@:operation.crossroads.baker"
         },    
         "matches": {
             "file_matches": {
@@ -156,8 +156,8 @@
         "description": "Test of DebugLogLevel 0 Directive",
         "enabled": "True",
         "normalize":"False",
-        "local_apache":{
-            "apache_vars" : "@IRONBEE_DEBUG_LOG_LEVEL@:0,@IRONBEE_LOAD_LUA_MODULE@:@CWD@/tests/debuglog.lua"
+        "local_apache_httpd":{
+            "apache_httpd_vars" : "@IRONBEE_DEBUG_LOG_LEVEL@:0,@IRONBEE_LOAD_LUA_MODULE@:@CWD@/tests/debuglog.lua"
         },    
         "matches": {
             "file_matches": {
@@ -178,8 +178,8 @@
         "description": "Test of DebugLogLevel 1 Directive",
         "enabled": "True",
         "normalize":"False",
-        "local_apache":{
-            "apache_vars" : "@IRONBEE_DEBUG_LOG_LEVEL@:1,@IRONBEE_LOAD_LUA_MODULE@:@CWD@/tests/debuglog.lua"
+        "local_apache_httpd":{
+            "apache_httpd_vars" : "@IRONBEE_DEBUG_LOG_LEVEL@:1,@IRONBEE_LOAD_LUA_MODULE@:@CWD@/tests/debuglog.lua"
         },
         "matches": {
             "file_matches": {
@@ -202,8 +202,8 @@
         "description": "Test of DebugLogLevel 2 Directive",
         "enabled": "True",
         "normalize":"False",
-        "local_apache":{
-            "apache_vars" : "@IRONBEE_DEBUG_LOG_LEVEL@:2,@IRONBEE_LOAD_LUA_MODULE@:@CWD@/tests/debuglog.lua"
+        "local_apache_httpd":{
+            "apache_httpd_vars" : "@IRONBEE_DEBUG_LOG_LEVEL@:2,@IRONBEE_LOAD_LUA_MODULE@:@CWD@/tests/debuglog.lua"
         },
         "matches": {
             "file_matches": {
@@ -226,8 +226,8 @@
         "description": "Test of DebugLogLevel 3 Directive",
         "enabled": "True",
         "normalize":"False",
-        "local_apache":{
-            "apache_vars" : "@IRONBEE_DEBUG_LOG_LEVEL@:3,@IRONBEE_LOAD_LUA_MODULE@:@CWD@/tests/debuglog.lua"
+        "local_apache_httpd":{
+            "apache_httpd_vars" : "@IRONBEE_DEBUG_LOG_LEVEL@:3,@IRONBEE_LOAD_LUA_MODULE@:@CWD@/tests/debuglog.lua"
         },
         "matches": {
             "file_matches": {
@@ -252,8 +252,8 @@
         "description": "Test of DebugLogLevel 4 Directive",
         "enabled": "True",
         "normalize":"False",
-        "local_apache":{
-            "apache_vars" : "@IRONBEE_DEBUG_LOG_LEVEL@:4,@IRONBEE_LOAD_LUA_MODULE@:@CWD@/tests/debuglog.lua"
+        "local_apache_httpd":{
+            "apache_httpd_vars" : "@IRONBEE_DEBUG_LOG_LEVEL@:4,@IRONBEE_LOAD_LUA_MODULE@:@CWD@/tests/debuglog.lua"
         },
         "matches": {
             "file_matches": {
@@ -279,8 +279,8 @@
         "description": "Test of DebugLogLevel 5 Directive",
         "enabled": "True",
         "normalize":"False",
-        "local_apache":{
-            "apache_vars" : "@IRONBEE_DEBUG_LOG_LEVEL@:5,@IRONBEE_LOAD_LUA_MODULE@:@CWD@/tests/debuglog.lua"
+        "local_apache_httpd":{
+            "apache_httpd_vars" : "@IRONBEE_DEBUG_LOG_LEVEL@:5,@IRONBEE_LOAD_LUA_MODULE@:@CWD@/tests/debuglog.lua"
         },
         "matches": {
             "file_matches": {
@@ -307,8 +307,8 @@
         "description": "Test of DebugLogLevel 6 Directive",
         "enabled": "True",
         "normalize":"False",
-        "local_apache":{
-            "apache_vars" : "@IRONBEE_DEBUG_LOG_LEVEL@:6,@IRONBEE_LOAD_LUA_MODULE@:@CWD@/tests/debuglog.lua"
+        "local_apache_httpd":{
+            "apache_httpd_vars" : "@IRONBEE_DEBUG_LOG_LEVEL@:6,@IRONBEE_LOAD_LUA_MODULE@:@CWD@/tests/debuglog.lua"
         },
         "matches": {
             "file_matches": {
@@ -336,8 +336,8 @@
         "description": "Test of DebugLogLevel 7 Directive",
         "enabled": "True",
         "normalize":"False",
-        "local_apache":{
-            "apache_vars" : "@IRONBEE_DEBUG_LOG_LEVEL@:7,@IRONBEE_LOAD_LUA_MODULE@:@CWD@/tests/debuglog.lua"
+        "local_apache_httpd":{
+            "apache_httpd_vars" : "@IRONBEE_DEBUG_LOG_LEVEL@:7,@IRONBEE_LOAD_LUA_MODULE@:@CWD@/tests/debuglog.lua"
         },
         "matches": {
             "file_matches": {
@@ -366,8 +366,8 @@
         "description": "Test of DebugLogLevel 8 Directive",
         "enabled": "True",
         "normalize":"False",
-        "local_apache":{
-            "apache_vars" : "@IRONBEE_DEBUG_LOG_LEVEL@:8,@IRONBEE_LOAD_LUA_MODULE@:@CWD@/tests/debuglog.lua"
+        "local_apache_httpd":{
+            "apache_httpd_vars" : "@IRONBEE_DEBUG_LOG_LEVEL@:8,@IRONBEE_LOAD_LUA_MODULE@:@CWD@/tests/debuglog.lua"
         },
         "matches": {
             "file_matches": {
@@ -397,8 +397,8 @@
         "description": "Test of DebugLogLevel 9 Directive",
         "enabled": "True",
         "normalize":"False",
-        "local_apache":{
-            "apache_vars" : "@IRONBEE_DEBUG_LOG_LEVEL@:9,@IRONBEE_LOAD_LUA_MODULE@:@CWD@/tests/debuglog.lua"
+        "local_apache_httpd":{
+            "apache_httpd_vars" : "@IRONBEE_DEBUG_LOG_LEVEL@:9,@IRONBEE_LOAD_LUA_MODULE@:@CWD@/tests/debuglog.lua"
         },
         "matches": {
             "file_matches": {
@@ -425,8 +425,8 @@
         "description": "Test of DebugLogLevel Default",
         "enabled": "False",
         "normalize":"False",
-        "local_apache":{
-            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test19.in"
+        "local_apache_httpd":{
+            "apache_httpd_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test19.in"
         },
         "matches": {
             "file_matches": {
@@ -452,8 +452,8 @@
         "description": "Test of LoadModule Nonexistent",
         "enabled": "True",
         "normalize":"False",
-        "local_apache":{
-            "apache_vars" : "@IRONBEE_EXTRA@:LoadModule \"Abel.so\""
+        "local_apache_httpd":{
+            "apache_httpd_vars" : "@IRONBEE_EXTRA@:LoadModule \"Abel.so\""
         },
         "matches": {
             "file_matches": {
@@ -472,7 +472,7 @@
         "description": "TRACE request for /index.html",
         "enabled": "True",
         "normalize":"False",
-        "local_apache":{},
+        "local_apache_httpd":{},
         "matches": {
             "file_matches": {
                 "apache_httpd_server_root/logs/audit/auditlog.log": {
@@ -492,7 +492,7 @@
         "description": "OPTIONS request for /index.html",
         "enabled": "True",
         "normalize":"False",
-        "local_apache":{},
+        "local_apache_httpd":{},
         "matches": {
             "file_matches": {
                 "apache_httpd_server_root/logs/audit/auditlog.log": {
@@ -512,7 +512,7 @@
         "description": "HEAD request for /index.html",
         "enabled": "True",
         "normalize":"False",
-        "local_apache":{},
+        "local_apache_httpd":{},
         "matches": {
             "file_matches": {
                 "apache_httpd_server_root/logs/audit/auditlog.log": {
@@ -531,7 +531,7 @@
         "description": "POST request for /index.html",
         "enabled": "True",
         "normalize":"False",
-        "local_apache":{},
+        "local_apache_httpd":{},
         "matches": {
             "file_matches": {
                 "apache_httpd_server_root/logs/audit/auditlog.log": {
@@ -550,8 +550,8 @@
         "description": "Test of AuditLogParts invalid AggievillePBR (minimal)",
         "enabled": "True",
         "normalize":"False",
-        "local_apache":{
-            "apache_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:AggievillePBR"
+        "local_apache_httpd":{
+            "apache_httpd_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:AggievillePBR"
         },
         "matches": {
             "file_matches": {
@@ -569,8 +569,8 @@
         "description": "Test of AuditLogParts minimal (header and events only)",
         "enabled": "True",
         "normalize":"False",
-        "local_apache":{
-            "apache_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:minimal"
+        "local_apache_httpd":{
+            "apache_httpd_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:minimal"
         },
         "matches": {
             "file_matches": {
@@ -592,8 +592,8 @@
         "description": "Test of AuditLogParts minimal (header and events only) +request",
         "enabled": "True",
         "normalize":"False",
-        "local_apache":{
-            "apache_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:minimal +request"
+        "local_apache_httpd":{
+            "apache_httpd_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:minimal +request"
         },
         "matches": {
             "file_matches": {
@@ -618,8 +618,8 @@
         "description": "Test of AuditLogParts minimal (header and events only) +request -requestMetadata",
         "enabled": "True",
         "normalize":"False",
-        "local_apache":{
-            "apache_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:minimal +request -requestMetadata"
+        "local_apache_httpd":{
+            "apache_httpd_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:minimal +request -requestMetadata"
         },
         "matches": {
             "file_matches": {
@@ -643,8 +643,8 @@
         "description": "Test of AuditLogParts minimal (header and events only) +request -requestHeaders",
         "enabled": "True",
         "normalize":"False",
-        "local_apache":{
-            "apache_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:minimal +request -requestHeaders"
+        "local_apache_httpd":{
+            "apache_httpd_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:minimal +request -requestHeaders"
         },
         "matches": {
             "file_matches": {
@@ -668,8 +668,8 @@
         "description": "Test of AuditLogParts minimal (header and events only) +response",
         "enabled": "True",
         "normalize":"False",
-        "local_apache":{
-            "apache_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:minimal +response"
+        "local_apache_httpd":{
+            "apache_httpd_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:minimal +response"
         },
         "matches": {
             "file_matches": {
@@ -694,8 +694,8 @@
         "description": "Test of AuditLogParts minimal (header and events only) +response -responseMetadata",
         "enabled": "True",
         "normalize":"False",
-        "local_apache":{
-            "apache_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:minimal +response -responseMetadata"
+        "local_apache_httpd":{
+            "apache_httpd_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:minimal +response -responseMetadata"
         },
         "matches": {
             "file_matches": {
@@ -719,8 +719,8 @@
         "description": "Test of AuditLogParts minimal (header and events only) +response -responseHeaders",
         "enabled": "True",
         "normalize":"False",
-        "local_apache":{
-            "apache_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:minimal +response -responseHeaders" 
+        "local_apache_httpd":{
+            "apache_httpd_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:minimal +response -responseHeaders" 
         },
         "matches": {
             "file_matches": {
@@ -744,8 +744,8 @@
         "description": "Test of AuditLogParts minimal (header and events only) +response +requestHeaders",
         "enabled": "True",
         "normalize":"False",
-        "local_apache":{
-            "apache_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:minimal +response +requestHeaders"
+        "local_apache_httpd":{
+            "apache_httpd_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:minimal +response +requestHeaders"
         },
         "matches": {
             "file_matches": {
@@ -771,8 +771,8 @@
         "description": "Test of AuditLogParts minimal (header and events only) +response +requestMetadata",
         "enabled": "True",
         "normalize":"False",
-        "local_apache":{
-            "apache_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:minimal +response +requestMetadata" 
+        "local_apache_httpd":{
+            "apache_httpd_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:minimal +response +requestMetadata" 
         },
         "matches": {
             "file_matches": {
@@ -798,8 +798,8 @@
         "description": "Test of AuditLogParts minimal (header and events only) +response -responseMetadata",
         "enabled": "True",
         "normalize":"False",
-        "local_apache":{
-            "apache_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:minimal +response -responseMetadata" 
+        "local_apache_httpd":{
+            "apache_httpd_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:minimal +response -responseMetadata" 
         },
         "matches": {
             "file_matches": {
@@ -823,8 +823,8 @@
         "description": "Test of AuditLogParts minimal (header and events only) +response -responseHeaders",
         "enabled": "True",
         "normalize":"False",
-        "local_apache":{
-            "apache_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:minimal +response -responseHeaders"
+        "local_apache_httpd":{
+            "apache_httpd_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:minimal +response -responseHeaders"
         },
         "matches": {
             "file_matches": {
@@ -848,8 +848,8 @@
         "description": "Test of AuditLogParts minimal (header and events only) +request +responseMetadata",
         "enabled": "True",
         "normalize":"False",
-        "local_apache":{
-            "apache_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:minimal +request +responseMetadata"
+        "local_apache_httpd":{
+            "apache_httpd_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:minimal +request +responseMetadata"
         },
         "matches": {
             "file_matches": {
@@ -875,8 +875,8 @@
         "description": "Test of AuditLogParts minimal (header and events only) +request +responseHeaders",
         "enabled": "True",
         "normalize":"False",
-        "local_apache":{
-            "apache_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:minimal +request +responseHeaders"
+        "local_apache_httpd":{
+            "apache_httpd_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:minimal +request +responseHeaders"
         },
         "matches": {
             "file_matches": {
@@ -902,8 +902,8 @@
         "description": "Test of AuditLogParts none", 
         "enabled": "True",
         "normalize":"False",
-        "local_apache":{
-            "apache_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:none"
+        "local_apache_httpd":{
+            "apache_httpd_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:none"
         },
         "matches": {
             "file_matches": {
@@ -922,8 +922,8 @@
         "description": "Test of AuditLogParts none +events",
         "enabled": "True",
         "normalize":"False",
-        "local_apache":{
-            "apache_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:none +events"
+        "local_apache_httpd":{
+            "apache_httpd_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:none +events"
         },
         "matches": {
             "file_matches": {
@@ -944,8 +944,8 @@
         "description": "Test of AuditLogParts none +header",
         "enabled": "True",
         "normalize":"False",
-        "local_apache":{
-            "apache_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:none +header"
+        "local_apache_httpd":{
+            "apache_httpd_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:none +header"
         },
         "matches": {
             "file_matches": {
@@ -966,8 +966,8 @@
         "description": "Test of AuditLogParts none +requestMetadata",
         "enabled": "True",
         "normalize":"False",
-        "local_apache":{
-            "apache_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:none +requestMetadata"
+        "local_apache_httpd":{
+            "apache_httpd_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:none +requestMetadata"
         },
         "matches": {
             "file_matches": {
@@ -988,8 +988,8 @@
         "description": "Test of AuditLogParts none +requestHeaders",
         "enabled": "True",
         "normalize":"False",
-        "local_apache":{
-            "apache_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:none +requestHeaders"
+        "local_apache_httpd":{
+            "apache_httpd_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:none +requestHeaders"
         },
         "matches": {
             "file_matches": {
@@ -1010,8 +1010,8 @@
         "description": "Test of AuditLogParts none +responeMetadata",
         "enabled": "True",
         "normalize":"False",
-        "local_apache":{
-            "apache_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:none +responseMetadata"
+        "local_apache_httpd":{
+            "apache_httpd_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:none +responseMetadata"
         },
         "matches": {
             "file_matches": {
@@ -1032,8 +1032,8 @@
         "description": "Test of AuditLogParts none +responeHeaders",
         "enabled": "True",
         "normalize":"False",
-        "local_apache":{
-            "apache_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:none +responseHeaders"
+        "local_apache_httpd":{
+            "apache_httpd_vars" : "@IRONBEE_AUDIT_LOG_PARTS@:none +responseHeaders"
         },
         "matches": {
             "file_matches": {
@@ -1054,8 +1054,8 @@
         "description": "Test of AuditLogParts default",
         "enabled": "False",
         "normalize":"False",
-        "local_apache":{
-            "apache_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test46.in"
+        "local_apache_httpd":{
+            "apache_httpd_vars" : "@IRONBEE_CONF_TEMPLATE@:@CWD@/tests/ironbee.conf.test46.in"
         },
         "matches": {
             "file_matches": {
