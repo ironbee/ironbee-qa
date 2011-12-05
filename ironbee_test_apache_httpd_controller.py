@@ -333,7 +333,7 @@ def apache_httpd_reset_and_restart(options,apache_httpd_var_string):
     if options.local_apache_httpd:
        if apache_httpd_var_string != "":
            options.apache_httpd_var_string = apache_httpd_var_string
-       apache_start(options)
+       apache_httpd_start(options)
        
 def apache_httpd_check_for_core(options):
     if options.apache_httpd_vars.has_key('@IRONBEE_COREDUMP_DIR@'):
