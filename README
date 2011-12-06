@@ -45,5 +45,3 @@ python ./ironbee_test.py  --one-shot="GET / HTTP/1.1\r\nHost: foo\r\n\r\n" --hos
 
 #Judy Evasions
 sudo ./ironbee_test.py  --one-shot="GET / HTTP/1.1\r\nHost: smart.people.on.ice\r\n\r\n" --host="172.18.101.100" --port=80 --send-mode="jnovak_send_rst_bad_chksum"
-
-
