@@ -318,7 +318,7 @@ def parse_payload(options,host,port,payload,normalize):
 def send_request(options,request):
     if options.send_mode == "raw_socket":
         (parsed_response) = send_raw_socket(options,options.host,options.port,request['parsed_payload'],False,False)
-    if options.send_mode == "raw_socket_ssl":
+    elif options.send_mode == "raw_socket_ssl":
         (parsed_response) = send_raw_socket(options,options.host,options.port,request['parsed_payload'],False,True)
     elif options.send_mode == "jnovak_send_rst_bad_chksum":
         jne=JudyNovakEvade()
