@@ -19,6 +19,7 @@
 
 import socket
 import sys
+import ssl
 import urllib2
 import urllib
 from collections import defaultdict
@@ -316,7 +317,9 @@ def parse_payload(options,host,port,payload,normalize):
 
 def send_request(options,request):
     if options.send_mode == "raw_socket":
-        (parsed_response) = send_raw_socket(options,options.host,options.port,request['parsed_payload'],False)
+        (parsed_response) = send_raw_socket(options,options.host,options.port,request['parsed_payload'],False,False)
+    if options.send_mode == "raw_socket_ssl":
+        (parsed_response) = send_raw_socket(options,options.host,options.port,request['parsed_payload'],False,True)
     elif options.send_mode == "jnovak_send_rst_bad_chksum":
         jne=JudyNovakEvade()
         (parsed_response) = jne.jnovak_send_rst_bad_chksum(options,options.host,options.port,request['parsed_payload'])
@@ -346,11 +349,15 @@ def send_request(options,request):
         sys.exit(-1)
     return parsed_response
 
-def send_raw_socket(options,host,port,payload,tcpsplice):
+def send_raw_socket(options,host,port,payload,tcpsplice,use_ssl):
     options.log.debug("attempting to send %s:%s %s" % (host,port,payload))
     ipaddy = socket.gethostbyname(host)
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.settimeout(30)
+
+    if use_ssl == True:
+        s = ssl.wrap_socket(s)
+
     response = ""
     response_len = 0
     content_len_header = None
@@ -360,7 +367,7 @@ def send_raw_socket(options,host,port,payload,tcpsplice):
     try:
         s.connect((ipaddy, port))
     except:
-        options.log.error("failed to make socket connection to %s:%s" % (ipaddy,port))
+        options.log.error("failed to make socket connection to %s:%s %s" % (ipaddy,port,sys.exc_info()))
         parsed_response = parse_raw_response(options,response,response_len)
         if options.save_requests_on_fail:
             save_request(options,"req-failure-%s" % options.current_req_id,payload)
@@ -538,46 +545,46 @@ def payload_splitter(options,payload,no_parts):
         options.log.debug("%s:%s" % (key,parts[key]))
     return parts
    
-def bo_test(options,host,port,request):
-    payload = ""
-    buff_overflow_list=["A" * 256,  "A" * 513, "A" * 1025, "A" * 65536, "A" * 131072]
-    #Look for overflow in request method
-    for buf in buff_overflow_list:
-        #method overflow
-        payload = request['method'] + buf + " " + request['uri'] + " " + request['proto']+ "/" + request['version'] + "\r\n"
-        for header in request['headers']:
-            if header[0] and header[1]:
-                payload = payload + "%s: %s\r\n" % (header[0],header[1])
-        payload = payload + "\r\n"
-        options.log.debug(payload)
-        send_raw_socket(host,port,payload,False)
-        
-        #uri overflow
-        payload = request['method'] + " " + request['uri'] + buf + " " + request['proto']+ "/" + request['version'] + "\r\n"
-        for header in request['headers']:
-            if header[0] and header[1]:
-                payload = payload + "%s: %s\r\n" % (header[0],header[1])
-        payload = payload + "\r\n"
-        options.log.debug(payload)
-        send_raw_socket(host,port,payload,False)
-        
-        #proto overflow
-        payload = request['method'] + " " + request['uri'] + " " + request['proto'] + buf + "/" + request['version'] + "\r\n"
-        for header in request['headers']:
-            if header[0] and header[1]:
-                payload = payload + "%s: %s\r\n" % (header[0],header[1])
-        payload = payload + "\r\n"
-        options.log.debug(payload)
-        send_raw_socket(host,port,payload,False)    
-
-        #version overflow
-        payload = request['method'] + " " + request['uri'] + " " + request['proto'] + "/" + request['version'] + buf + "\r\n"
-        for header in request['headers']:
-            if header[0] and header[1]:
-                payload = payload + "%s: %s\r\n" % (header[0],header[1])
-        payload = payload + "\r\n"
-        options.log.debug(payload)
-        send_raw_socket(host,port,payload,False)
+#def bo_test(options,host,port,request):
+#    payload = ""
+#    buff_overflow_list=["A" * 256,  "A" * 513, "A" * 1025, "A" * 65536, "A" * 131072]
+#    #Look for overflow in request method
+#    for buf in buff_overflow_list:
+#        #method overflow
+#        payload = request['method'] + buf + " " + request['uri'] + " " + request['proto']+ "/" + request['version'] + "\r\n"
+#        for header in request['headers']:
+#            if header[0] and header[1]:
+#                payload = payload + "%s: %s\r\n" % (header[0],header[1])
+#        payload = payload + "\r\n"
+#        options.log.debug(payload)
+#        send_request(host,port,payload,False)
+#        
+#        #uri overflow
+#        payload = request['method'] + " " + request['uri'] + buf + " " + request['proto']+ "/" + request['version'] + "\r\n"
+#        for header in request['headers']:
+#            if header[0] and header[1]:
+#                payload = payload + "%s: %s\r\n" % (header[0],header[1])
+#        payload = payload + "\r\n"
+#        options.log.debug(payload)
+#        send_raw_socket(host,port,payload,False)
+#        
+#        #proto overflow
+#        payload = request['method'] + " " + request['uri'] + " " + request['proto'] + buf + "/" + request['version'] + "\r\n"
+#        for header in request['headers']:
+#            if header[0] and header[1]:
+#                payload = payload + "%s: %s\r\n" % (header[0],header[1])
+#        payload = payload + "\r\n"
+#        options.log.debug(payload)
+#        send_raw_socket(host,port,payload,False)    
+#
+#        #version overflow
+#        payload = request['method'] + " " + request['uri'] + " " + request['proto'] + "/" + request['version'] + buf + "\r\n"
+#        for header in request['headers']:
+#            if header[0] and header[1]:
+#                payload = payload + "%s: %s\r\n" % (header[0],header[1])
+#        payload = payload + "\r\n"
+#        options.log.debug(payload)
+#        send_raw_socket(host,port,payload,False)
 
 def get_file_size(file_name):
     try:
