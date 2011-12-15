@@ -603,10 +603,11 @@
                         "Content-Disposition: audit-log-part; name=\"header\"",
                         "Content-Disposition: audit-log-part; name=\"events\"",
                         "Content-Disposition: audit-log-part; name=\"http-request-metadata\"",
-                        "Content-Disposition: audit-log-part; name=\"http-request-headers\""
+                        "Content-Disposition: audit-log-part; name=\"http-request-headers\"",
+                        "Content-Disposition: audit-log-part; name=\"http-request-body\""
                     ],
                     "re_negated": [
-                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!(header|events|http-request-metadata|http-request-headers))"
+                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!(header|events|http-request-metadata|http-request-headers|http-request-body))"
                     ]
 
                 }
@@ -628,10 +629,11 @@
                     "simple": [
                         "Content-Disposition: audit-log-part; name=\"header\"",
                         "Content-Disposition: audit-log-part; name=\"events\"",
-                        "Content-Disposition: audit-log-part; name=\"http-request-headers\""
+                        "Content-Disposition: audit-log-part; name=\"http-request-headers\"",
+                        "Content-Disposition: audit-log-part; name=\"http-request-body\""
                     ],
                     "re_negated": [
-                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!(header|events|http-request-headers))"
+                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!(header|events|http-request-headers|http-request-body))"
                     ]
 
                 }
@@ -653,10 +655,11 @@
                     "simple": [
                         "Content-Disposition: audit-log-part; name=\"header\"",
                         "Content-Disposition: audit-log-part; name=\"events\"",
-                        "Content-Disposition: audit-log-part; name=\"http-request-metadata\""
+                        "Content-Disposition: audit-log-part; name=\"http-request-metadata\"",
+                        "Content-Disposition: audit-log-part; name=\"http-request-body\""
                     ],
                     "re_negated": [
-                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!(header|events|http-request-metadata))"
+                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!(header|events|http-request-metadata|http-request-body))"
                     ]
 
                 }
@@ -679,10 +682,11 @@
                         "Content-Disposition: audit-log-part; name=\"header\"",
                         "Content-Disposition: audit-log-part; name=\"events\"",
                         "Content-Disposition: audit-log-part; name=\"http-response-metadata\"",
-                        "Content-Disposition: audit-log-part; name=\"http-response-headers\""
+                        "Content-Disposition: audit-log-part; name=\"http-response-headers\"",
+                        "Content-Disposition: audit-log-part; name=\"http-response-body\""
                     ],
                     "re_negated": [
-                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!(header|events|http-response-metadata|http-response-headers))"
+                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!(header|events|http-response-metadata|http-response-headers|http-response-body))"
                     ]
 
                 }
@@ -704,10 +708,11 @@
                     "simple": [
                         "Content-Disposition: audit-log-part; name=\"header\"",
                         "Content-Disposition: audit-log-part; name=\"events\"",
-                        "Content-Disposition: audit-log-part; name=\"http-response-headers\""
+                        "Content-Disposition: audit-log-part; name=\"http-response-headers\"",
+                        "Content-Disposition: audit-log-part; name=\"http-response-body\""
                     ],
                     "re_negated": [
-                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!(header|events|http-response-headers))"
+                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!(header|events|http-response-headers|http-response-body))"
                     ]
 
                 }
@@ -729,10 +734,11 @@
                     "simple": [
                         "Content-Disposition: audit-log-part; name=\"header\"",
                         "Content-Disposition: audit-log-part; name=\"events\"",
-                        "Content-Disposition: audit-log-part; name=\"http-response-metadata\""
+                        "Content-Disposition: audit-log-part; name=\"http-response-metadata\"",
+                        "Content-Disposition: audit-log-part; name=\"http-response-body\""
                     ],
                     "re_negated": [
-                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!(header|events|http-response-metadata))"
+                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!(header|events|http-response-metadata|http-response-body))"
                     ]
 
                 }
@@ -756,10 +762,11 @@
                         "Content-Disposition: audit-log-part; name=\"events\"",
                         "Content-Disposition: audit-log-part; name=\"http-response-headers\"",
                         "Content-Disposition: audit-log-part; name=\"http-response-metadata\"",
-                        "Content-Disposition: audit-log-part; name=\"http-request-headers\""
+                        "Content-Disposition: audit-log-part; name=\"http-request-headers\"",
+                        "Content-Disposition: audit-log-part; name=\"http-response-body\""
                     ],
                     "re_negated": [
-                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!(header|events|http-response-metadata|http-response-headers|http-request-headers))"
+                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!(header|events|http-response-metadata|http-response-headers|http-request-headers|http-response-body))"
                     ]
 
                 }
@@ -783,10 +790,11 @@
                         "Content-Disposition: audit-log-part; name=\"events\"",
                         "Content-Disposition: audit-log-part; name=\"http-response-headers\"",
                         "Content-Disposition: audit-log-part; name=\"http-response-metadata\"",
-                        "Content-Disposition: audit-log-part; name=\"http-request-metadata\""
+                        "Content-Disposition: audit-log-part; name=\"http-request-metadata\"",
+                        "Content-Disposition: audit-log-part; name=\"http-response-body\""
                     ],
                     "re_negated": [
-                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!(header|events|http-response-metadata|http-response-headers|http-request-metadata))"
+                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!(header|events|http-response-metadata|http-response-headers|http-request-metadata|http-response-body))"
                     ]
 
                 }
@@ -808,10 +816,11 @@
                     "simple": [
                         "Content-Disposition: audit-log-part; name=\"header\"",
                         "Content-Disposition: audit-log-part; name=\"events\"",
-                        "Content-Disposition: audit-log-part; name=\"http-response-headers\""
+                        "Content-Disposition: audit-log-part; name=\"http-response-headers\"",
+                        "Content-Disposition: audit-log-part; name=\"http-response-body\""
                     ],
                     "re_negated": [
-                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!(header|events|http-response-headers))"
+                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!(header|events|http-response-headers|http-response-body))"
                     ]
 
                 }
@@ -833,10 +842,11 @@
                     "simple": [
                         "Content-Disposition: audit-log-part; name=\"header\"",
                         "Content-Disposition: audit-log-part; name=\"events\"",
-                        "Content-Disposition: audit-log-part; name=\"http-response-metadata\""
+                        "Content-Disposition: audit-log-part; name=\"http-response-metadata\"",
+                        "Content-Disposition: audit-log-part; name=\"http-response-body\""
                     ],
                     "re_negated": [
-                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!(header|events|http-response-metadata))"
+                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!(header|events|http-response-metadata|http-response-body))"
                     ]
 
                 }
@@ -860,10 +870,11 @@
                         "Content-Disposition: audit-log-part; name=\"events\"",
                         "Content-Disposition: audit-log-part; name=\"http-request-headers\"",
                         "Content-Disposition: audit-log-part; name=\"http-request-metadata\"",
-                        "Content-Disposition: audit-log-part; name=\"http-response-metadata\""
+                        "Content-Disposition: audit-log-part; name=\"http-response-metadata\"",
+                        "Content-Disposition: audit-log-part; name=\"http-request-body\""
                     ],
                     "re_negated": [
-                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!(header|events|http-request-metadata|http-request-headers|http-response-metadata))"
+                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!(header|events|http-request-metadata|http-request-headers|http-response-metadata|http-request-body))"
                     ]
 
                 }
@@ -887,10 +898,11 @@
                         "Content-Disposition: audit-log-part; name=\"events\"",
                         "Content-Disposition: audit-log-part; name=\"http-request-headers\"",
                         "Content-Disposition: audit-log-part; name=\"http-request-metadata\"",
-                        "Content-Disposition: audit-log-part; name=\"http-response-headers\""
+                        "Content-Disposition: audit-log-part; name=\"http-response-headers\"",
+                        "Content-Disposition: audit-log-part; name=\"http-request-body\""
                     ],
                     "re_negated": [
-                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!(header|events|http-response-headers|http-request-headers|http-request-metadata))"
+                        "(Content-Disposition\\: audit-log-part; name=\\\")(?!(header|events|http-response-headers|http-request-headers|http-request-metadata|http-request-body))"
                     ]
 
                 }
