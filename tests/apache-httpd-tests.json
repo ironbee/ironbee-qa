@@ -544,7 +544,7 @@
                 }
             }
         },
-        "raw_request": "POST /index.html HTTP/1.1\r\nHost: foo\r\n\r\nblah"
+        "raw_request": "POST /index.html HTTP/1.1\r\nHost: foo\r\nContent-Length: 4\r\n\r\nblah"
     },
     "test25": {
         "description": "Test of AuditLogParts invalid AggievillePBR (minimal)",
@@ -613,7 +613,7 @@
                 }
             }
         },
-        "raw_request": "POST / HTTP/1.1\r\nHost: foo\r\n\r\nblah=blue"
+        "raw_request": "POST / HTTP/1.1\r\nHost: foo\r\nContent-Length: 9\r\n\r\nblah=blue"
     },
     "test28": {
         "description": "Test of AuditLogParts minimal (header and events only) +request -requestMetadata",
