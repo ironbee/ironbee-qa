@@ -91,6 +91,9 @@ if __name__ == "__main__":
 
     #IronBee cli config
     parser.add_option("--ibcli-conf", dest="ibcli_conf", type="string", help="path to the ironbee config file to use with the IronBee cli tool")
+
+    #pcap2raw only log streams with matching request/response pairs
+    parser.add_option("--pcap2raw-match-only", dest="pcap2raw_match_only", action="store_true", default=False, help="Only write streams that have matching request/response pairs.")
  
     #parse the opts
     (options, args) = parser.parse_args()
@@ -235,25 +238,26 @@ if __name__ == "__main__":
 
                              i = 0
                              while i < request_list_len:
-                                 request = open('%s.request.%s.raw' % (stream['file_format'], i) , 'w')
+                                 request = open('%s.request.%04d.raw' % (stream['file_format'], i) , 'w')
                                  request.write(stream['request_list'][i])
                                  merged.write(stream['request_list'][i])
                                  request.close()
 
-                                 response = open('%s.response.%s.raw' % (stream['file_format'], i) , 'w')
+                                 response = open('%s.response.%04d.raw' % (stream['file_format'], i) , 'w')
                                  response.write(stream['response_list'][i])
                                  merged.write(stream['response_list'][i])
                                  response.close()
                                  i = i + 1
 
                              merged.close()
-
+                         elif options.pcap2raw_match_only:
+                             options.log.error("WARNING!!! there is a mis-match between requests and responses in stream %s skipping\n" % (stream['num']))
                          else:
-                             print "WARNING!!! there is a mis-match between requests and responses in stream %s\n" % (stream['num'])
+                             options.log.error("WARNING!!! there is a mis-match between requests and responses in stream %s\n" % (stream['num']))
                              #requests
                              i = 0
                              while i < request_list_len:
-                                 f = open('%s.request.%s.raw' % (stream['file_format'], i) , 'w')
+                                 f = open('%s.request.%04d.raw' % (stream['file_format'], i) , 'w')
                                  f.write(stream['request_list'][i])
                                  f.close()
                                  i = i + 1
@@ -261,7 +265,7 @@ if __name__ == "__main__":
                              #responses                             
                              i = 0
                              while i < response_list_len:
-                                 f = open('%s.response.%s.raw' % (stream['file_format'], i) , 'w')
+                                 f = open('%s.response.%04d.raw' % (stream['file_format'], i) , 'w')
                                  f.write(stream['response_list'][i])
                                  f.close()
                                  i = i + 1

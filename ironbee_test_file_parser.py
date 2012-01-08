@@ -209,7 +209,7 @@ class FileParser:
                 tmp_dict['tosever'] = toserver
                 tmp_dict['request_list'] = []
                 tmp_dict['response_list'] = []
-                tmp_dict['file_format'] = "%s-%s-%s-%s-%s-%s" % (self.filename, tmp_dict['num'], tmp_dict['src'], tmp_dict['sport'], tmp_dict['dst'], tmp_dict['dport'])
+                tmp_dict['file_format'] = "%s-%05d-%s-%s-%s-%s" % (self.filename, tmp_dict['num'], tmp_dict['src'], tmp_dict['sport'], tmp_dict['dst'], tmp_dict['dport'])
 
                 requests=[]
                 for m in re.finditer(r'^(?P<http_method>[A-Z\-]+)\s+(?P<http_uri>.+)\s+HTTP\/(?P<http_version>\d\.\d)\r?\n',toserver,re.MULTILINE):
