@@ -270,6 +270,60 @@ if __name__ == "__main__":
                                  f.close()
                                  i = i + 1
 
+                elif options.file_format == "pcap2modsecsa":
+                    from time import gmtime, strftime
+                    import random
+                    import string
+                    modsecf = open('modsec_audit.log', 'wb')
+                    #Always set this we don't want anything replaced but still want to parse      
+                    options.replace_host_header = False
+                    stream_list = fp.parse_pcap(options,test)
+                    for stream in stream_list:
+                         request_list_len = len(stream['request_list'])
+                         response_list_len = len(stream['response_list'])
+
+                         if(request_list_len == response_list_len):
+                             i = 0
+                             while i < request_list_len:
+                                print "%s:%s -> %s:%s" % (stream['src'], stream['sport'], stream['dst'], stream['dport'])
+                                modsec_id = ''.join(random.choice(string.ascii_lowercase + string.digits) for x in range(8))
+                                parsed_request = fast_and_loose_parser(options,stream['request_list'][i],"req")
+                                parsed_response = fast_and_loose_parser(options,stream['response_list'][i],"rsp")
+
+                                part_a_time = strftime("[%d/%b/%Y:%H:%M:%S +0000]",gmtime())
+                                modsecf.write("--%s-A--\n%s blah %s %s %s %s\n" % (modsec_id, part_a_time, stream['src'], stream['sport'], stream['dst'], stream['dport']))
+                                modsecf.write("--%s-B--\n" %(modsec_id))
+                                if parsed_request['parse_error'] == False:
+                                    if parsed_request.has_key('raw_headers'):
+                                        modsecf.write("%s%s\n" % (parsed_request['request_line'],parsed_request['raw_headers']))
+                                    elif parsed_request.has_key('request_line'):
+                                        modsecf.write("%s\n" % (parsed_request['request_line']))
+                                    modsecf.write("--%s-C--\n" % (modsec_id))
+                                    if parsed_request.has_key('normalized_body'):
+                                        if parsed_request['normalized_body'] != None:
+                                            modsecf.write("%s\n" % (parsed_request['normalized_body']))
+                                        else:
+                                            modsecf.write("%s\n" % (parsed_request['raw_body']))
+                                    elif parsed_request.has_key('raw_body'):
+                                        modsecf.write("%s\n" % (parsed_request['raw_body']))
+                                if parsed_response['parse_error'] == False:
+                                    modsecf.write("--%s-E--\n" %(modsec_id))
+                                    if parsed_response.has_key('normalized_body'):
+                                       if parsed_response['normalized_body'] != None:
+                                            modsecf.write("%s\n" % (parsed_response['normalized_body']))
+                                       else:
+                                            modsecf.write("%s\n" % (parsed_response['raw_body']))
+                                    elif parsed_response.has_key('raw_body'):
+                                        modsecf.write("%s\n" % (parsed_response['raw_body']))
+                                    modsecf.write("--%s-F--\n" %(modsec_id))
+                                    if parsed_response.has_key('raw_headers'):
+                                        modsecf.write("%s%s\n" % (parsed_response['status_line'],parsed_response['raw_headers']))
+                                    elif parsed_request.has_key('status_line'):
+                                        modsecf.write("%s\n" % (parsed_request['status_line']))
+                                modsecf.write("--%s-Z--\n" % (modsec_id))
+                                i = i  + 1
+                    modsecf.close()
+
                 elif options.file_format == "pcap2ibcli":
                     if options.ibcli_bin == None:
                         options.log.error("You must specify a path to the IronBee cli tool via --ibcli-bin") 

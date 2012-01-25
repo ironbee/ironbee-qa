@@ -43,5 +43,8 @@ python ./ironbee_test.py  --one-shot="GET / HTTP/1.1\r\nHost: foo\r\n\r\n" --hos
 #Read PCAP and convert to raw requests using LibNIDS. Proccess requests one at a time with the IronBee CLI tool.
 ./ironbee_test.py --file-glob=netsparkercommunity.pcap --console-log-level=error --file-format=pcap2ibcli --no-normalize --ibcli-bin=/usr/local/ironbee/bin/ibcli --ibcli-conf=/usr/local/ironbee/conf/ironbee.conf.example
 
+#Read PCAP and convert to Modsecurity audit log format.
+./ironbee_test.py --console-log-level=error --file-glob="openfpc*" --file-format=pcap2modsecsa --no-normalize
+
 #Judy Evasions
 sudo ./ironbee_test.py  --one-shot="GET / HTTP/1.1\r\nHost: smart.people.on.ice\r\n\r\n" --host="172.18.101.100" --port=80 --send-mode="jnovak_send_rst_bad_chksum"

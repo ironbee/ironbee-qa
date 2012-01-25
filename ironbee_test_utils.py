@@ -167,38 +167,57 @@ def ungzip_data(options,compressed_data):
         options.log.error("unzip failure")
         return compressed_data
 
+#based off of https://github.com/benoitc/http-parser/blob/master/http_parser/pyparser.py
+def py_http_ungzip_data(options,compressed_data):
+    uzip_error = False
+    try:
+        uncompressed_data = zlib.decompressobj(16+zlib.MAX_WBITS)
+        options.log.error("unzip success")
+        return (uncompressed_data,unzip_error)
+    except:
+        options.log.error("unzip failure")
+        unzip_error = True
+        return (None,unzip_error)
+
 def dechunk_data(options,chunked_data):
     #wonder if there is a better way without walking every byte in the body.
     dechunked_body = ""
+    dechunk_error = False
     while 1:
         m_chunk_len = re.match(r'^(?P<chunk_len>[a-zA-F0-9]+)(:[^\r\n]+)?\r\n',chunked_data)
         if m_chunk_len != None:
-            chunk_start = m_chunk_len.start()
-            chunk_end = m_chunk_len.end()
+            try:
+                chunk_start = m_chunk_len.start()
+                chunk_end = m_chunk_len.end()
 
-            #convert the chunk len from hex to dec
-            dec_chunk_len = int(m_chunk_len.group('chunk_len'), 16)
+                #convert the chunk len from hex to dec
+                dec_chunk_len = int(m_chunk_len.group('chunk_len'), 16)
 
-            #this is the last chunk
-            if dec_chunk_len == 0:
-                options.log.debug("we hit the 0 chunk we are all done")
-                break
-            else:
-                #strip the chunklen
-                chunked_data = chunked_data.lstrip(chunked_data[:chunk_end - 1])
+                #this is the last chunk
+                if dec_chunk_len == 0:
+                    options.log.debug("we hit the 0 chunk we are all done")
+                    break
+                else:
+                    #strip the chunklen
+                    chunked_data = chunked_data.lstrip(chunked_data[:chunk_end - 1])
                     
-                #walk the bytes adding them to the dechunked_buffer
-                i = 0
-                while i < dec_chunk_len:
-                    dechunked_body = dechunked_body + chunked_data[i]
-                    i = i + 1
-                #remove the \r\n blank line
-                chunked_data = chunked_data.lstrip(chunked_data[:dec_chunk_len + 2])
+                    #walk the bytes adding them to the dechunked_buffer
+                    i = 0
+                    while i <= dec_chunk_len:
+                        dechunked_body = dechunked_body + chunked_data[i]
+                        i = i + 1
+                    #remove the \r\n blank line
+                    chunked_data = chunked_data.lstrip(chunked_data[:dec_chunk_len + 2])
+            except Exception,e:
+                options.log.error("dechunking failure %s" % (e))
+                dechunk_error = True
+                break
         else:
-            #print "couldn't find chunk"
+            dechunk_error = True
             break
- 
-    return dechunked_body
+    if dechunk_error == False:
+        options.log.error("dechunk success") 
+    return (dechunked_body, dechunk_error)
 
 def escape_replace_payload(payload):
     payload = payload.replace('\\n', '\n')
@@ -498,8 +517,9 @@ def parse_raw_response(options,raw_response,raw_response_len):
                 options.log.debug("body len %s" % (len(response['body'])))
                 if response.has_key('transfer_encoding'):
                     if response['transfer_encoding'] == 'chunked':
-                        response['body'] = dechunk_data(options,response['body'])
-                       
+                        (dechunk,err) = dechunk_data(options,response['body'])
+                        if err == False:
+                            response['body'] = dechunk
                 if response.has_key('content_encoding'):
                     if response['content_encoding'] == 'gzip':
                         response['body'] = ungzip_data(options,response['body'])
@@ -744,3 +764,200 @@ def process_core_dump(options, core_file, binary, core_file_name_format):
     shutil.move(core_file,"%s.coredump" % (core_file_name_format))
     return
 
+def fast_and_loose_parser(options,payload,req_or_rsp,offset=None):
+    parsed_data = {}
+    parsed_data['parse_error'] = False
+    #parse the first line
+    payload_len = len(payload)
+    if offset == None:
+        idx = payload.find('\n')
+        if idx > 0:
+            parsed_data['first_line'] = payload[:(idx+1)]
+            parsed_data['first_line_idx'] = idx
+            parsed_data['data_parsed'] = len(parsed_data['first_line'])
+            parsed_data['first_line_len'] = len(parsed_data['first_line']) 
+            parsed_data['data_remaining'] = payload_len - parsed_data['data_parsed'] 
+            if req_or_rsp == 'req':
+                m = re.match(r'^(?P<request_line>(?P<method>[^\s]+)\s+(?P<uri>[^\s]+)\s+(?P<proto>[^\/]+)\/(?P<version>[^\r\n]+)(?P<first_line_term>\r?\n))$',parsed_data['first_line'])
+                if m:
+                    parsed_data['request_line']=m.group('request_line')
+                    parsed_data['method']=m.group('method')
+                    parsed_data['uri']=m.group('uri')
+                    parsed_data['proto'] = m.group('proto')
+                    parsed_data['version'] = m.group('version')
+                    parsed_data['first_line_term'] = m.group('first_line_term')
+                else:
+                    parsed_data['parse_error'] = True
+                    return parsed_data
+
+            elif req_or_rsp == 'rsp':
+                m = re.match(r'^(?P<status_line>(?P<proto>[^\/]+)\/(?P<version>\d\.\d)\s+(?P<status>(?P<http_stat_code>\d+)\s+(?P<http_stat_msg>[^\r\n]+))(?P<first_line_term>\r?\n))$',parsed_data['first_line'])
+                if m:
+                    parsed_data['status_line'] = m.group('status_line')
+                    parsed_data['status'] = m.group('status')
+                    parsed_data['proto'] = m.group('proto')
+                    parsed_data['version'] = m.group('version')
+                    parsed_data['http_stat_code'] = m.group('http_stat_code')
+                    parsed_data['http_stat_msg'] = m.group('http_stat_msg')
+                    parsed_data['first_line_term'] = m.group('first_line_term')
+                else:
+                    parsed_data['parse_error'] = True
+                    return parsed_data
+    else:
+        options.log.error("could not find first line")
+        parsed_data['parse_error'] = True
+        return parsed_data
+    #check to see if we have any data left 
+    options.log.debug("first_line len:%s remain:%s fist_line_idx:%s len payload:%s line:%s\n first" % (len(parsed_data['first_line']),parsed_data['data_remaining'], parsed_data['first_line_idx'], payload_len, parsed_data['first_line']))
+    if parsed_data['data_remaining'] > 0:
+        REQ_NO_HEADERS_CRLF = False
+        REQ_NO_HEADERS_LF = False
+        REQ_NO_HEADERS_TERM = False
+        HEADERS_END_CRLF = False
+        HEADERS_END_LFLF = False
+
+        if (parsed_data['data_remaining'] > 2) and (payload[(parsed_data['first_line_idx'] + 1):(parsed_data['first_line_idx'] + 3)] != '\r\n' or payload[parsed_data['first_line_idx'] + 1] != '\n'):
+            idx = payload.find('\r\n\r\n',parsed_data['data_parsed'])
+            if idx > 0:
+                HEADERS_END_CRLF = True
+            else:
+                idx = payload.find('\n\n',parsed_data['data_parsed'])
+                if idx > 0:
+                    HEADERS_END_LFLF = True
+                else:
+                    options.log.debug("We have data and no headers")
+                    parsed_data['raw_body'] = payload[parsed_data['data_parsed']:]
+                    parsed_data['body_idx'] = parsed_data['data_parsed'] + parsed_data['data_remaining']
+                    parsed_data['data_remaining'] = 0
+                    return parsed_data
+ 
+            if idx != None:
+                parsed_data['headers_idx'] = idx
+                header_list = payload[parsed_data['data_parsed']:parsed_data['headers_idx']].split('\n')
+                parsed_data['header_dict'] = {}
+                for header in header_list:
+                     try:
+                         header_name_value_list = header.split(':',1)
+                         header_name = header_name_value_list[0]
+                         #we may have headers without a value
+                         try:
+                             header_value = header_name_value_list[1]
+                         except:
+                             header_value = None
+
+                         if header_value != None:
+                             header_value = header_value.lstrip(' ')
+                             header_value = header_value.rstrip('\n')
+                             header_value = header_value.rstrip('\r')
+
+                         #handle HPP by appending header values to key of the shared header_name 
+                         if parsed_data['header_dict'].has_key(header_name):
+                             parsed_data['header_dict'][header_name] = "%s,%s" % (parsed_data['header_dict'][header_name],header_value)
+                         else:
+                             parsed_data['header_dict'][header_name] = header_value
+
+                         if header_name == 'Content-Encoding':
+                             parsed_data['content_encoding'] = header_value
+                         elif header_name == 'Transfer-Encoding':
+                             parsed_data['transfer_encoding'] = header_value 
+                         elif header_name == 'Content-Length':
+                              parsed_data['content_length'] = int(header_value)                          
+                     except Exception,e:
+                         options.log.error("failed to parse header %s:%s skipping" % (header,e))
+
+                if HEADERS_END_CRLF == True:
+                     parsed_data['raw_headers'] = payload[parsed_data['data_parsed']:(parsed_data['headers_idx'] + 4)]
+                elif HEADERS_END_LFLF == True:
+                     parsed_data['raw_headers'] = payload[parsed_data['data_parsed']:(parsed_data['headers_idx'] + 2)]
+                else:
+                    options.log.error("we have headers but could not find a terminator?!?! shouldn't happen")
+                    sys.exit(-1)
+
+                parsed_data['raw_headers_len'] = len(parsed_data['raw_headers'])
+                parsed_data['data_parsed'] = parsed_data['first_line_len'] + parsed_data['raw_headers_len'] 
+                parsed_data['data_remaining'] =  parsed_data['data_remaining'] - parsed_data['raw_headers_len']
+
+                options.log.debug("remain:%s fist_line_idx:%s len paylod%s\n" % (parsed_data['data_remaining'], parsed_data['first_line_idx'], payload_len))
+                if parsed_data['data_remaining'] > 0:
+                    if parsed_data.has_key('content_length'):
+                       if parsed_data['content_length'] > 0:
+                           if parsed_data['content_length'] <= parsed_data['data_remaining']:
+                               parsed_data['raw_body'] = payload[parsed_data['data_parsed']:(parsed_data['data_parsed'] + parsed_data['content_length'])]
+                               parsed_data['body_idx'] = parsed_data['headers_idx'] + parsed_data['content_length']
+                               parsed_data['data_remaining'] = payload_len - parsed_data['body_idx']
+                           elif parsed_data['content_length'] > parsed_data['data_remaining']:
+                               options.log.warning("content len %s > than data remaining %s" % (parsed_data['content_length'],parsed_data['data_remaining']))
+                               parsed_data['raw_body'] = payload[parsed_data['data_parsed']:]
+                               parsed_data['body_idx'] = parsed_data['headers_idx'] + parsed_data['data_remaining']
+                               parsed_data['data_remaining'] = 0
+                           else:
+                               options.log.error("we shouldn't be here content len but not a number gt or lt data_remaining")
+                               options.log.error("%s" % (parsed_data))
+                               sys.exit(-1)
+
+                       #we have data remaining but a content len of < 1 for now just parse the rest of the data
+                       else:
+                           options.log.warning("content len of %s but %s data remaining\n" % (parsed_data['content_length'],parsed_data['data_remaining']))
+                           parsed_data['raw_body'] = payload[parsed_data['data_parsed']:]
+                           parsed_data['body_idx'] = parsed_data['headers_idx'] + parsed_data['data_remaining']
+                           parsed_data['data_remaining'] = 0
+                           
+                    #change this behavior we should support pipelining properly chunked data etc..
+                    else:
+                        options.log.error("data left %s but no content length header" % (parsed_data['data_remaining']))
+                        parsed_data['raw_body'] = payload[parsed_data['data_parsed']:]
+                        parsed_data['body_idx'] = parsed_data['headers_idx'] + parsed_data['data_remaining']
+                        parsed_data['data_remaining'] = 0
+
+                    if parsed_data.has_key('raw_body'):
+                        parsed_data['normalized_body'] = None
+                        if parsed_data.has_key('transfer_encoding'):
+                            if parsed_data['transfer_encoding'] == "chunked":
+                                (dechunk,err) = dechunk_data(options,parsed_data['raw_body'])
+                                if err == False:
+                                    parsed_data['normalized_body'] = dechunk
+                        if parsed_data.has_key('content_encoding'):
+                            if parsed_data['content_encoding'] == "gzip":
+                                 if parsed_data['normalized_body'] != None:
+                                     (gunzip,err) = py_http_ungzip_data(options,parsed_data['normalized_body'])
+                                 else:
+                                     (gunzip,err) = py_http_ungzip_data(options,parsed_data['raw_body'])
+
+                                 if err == False:
+                                     parsed_data['normalized_body'] = gunzip
+                        return parsed_data
+                else:
+                    return parsed_data
+        elif parsed_data['data_remaining'] == 2 and (payload[(parsed_data['first_line_idx']+1):(parsed_data['first_line_idx']+3)] == '\r\n'):
+            options.log.error("first line and no headers CRLF")
+            return parsed_data
+        elif parsed_data['data_remaining'] == 1 and payload[(parsed_data['first_line_idx']+1)] == '\n':
+            options.log.error("first line and no headers LF")
+            return parsed_data
+        elif parsed_data['data_remaining'] >= 1 and payload[(parsed_data['first_line_idx']+1)] == '\n':
+            options.log.error("first line followed only by \\n")
+            REQ_NO_HEADERS_LF = True
+        elif parsed_data['data_remaining'] >= 2 and payload[(parsed_data['first_line_idx']+1):(parsed_data['first_line_idx']+3)] == '\r\n':
+            options.log.error("first line followed only by \\r\\n")
+            REQ_NO_HEADERS_CRLF = True
+        else:
+            options.log.error("No headers but body")
+            REQ_NO_HEADERS_TERM = True
+        #We have a body and no headers, again we need to figure out how to handle pipelined requests
+        if REQ_NO_HEADERS_CRLF == True or REQ_NO_HEADERS_LF == True or REQ_NO_HEADERS_TERM == True:
+            parsed_data['raw_body'] = payload[parsed_data['data_parsed']:]
+            parsed_data['body_idx'] = parsed_data['first_line_idx'] + parsed_data['data_remaining']
+            parsed_data['data_remaining'] = 0
+            return parsed_data
+        else:
+             options.log.error("we shouldn't be here body and no headers fail\n")
+             options.log.error("%s" % (payload[parsed_data['first_line_idx']:]))
+             sys.exit(-1)
+    elif parsed_data['data_remaining'] == 0:
+        options.log.error("we only have a request line")
+        return parsed_data
+    else:
+        options.log.error("unknown error")
+        sys.exit(-1)
+        parsed_data['parse_error'] = True
+        return parsed_data 
