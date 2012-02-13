@@ -19,7 +19,7 @@ ScoreBoardFile @IRONBEE_LOGS_DIR@/httpd.scoreboard
 </IfModule>
 # TODO: Need to have these configurable
 LoadFile @LIBXML2_SO_PATH@ 
-LoadFile @LIB_HTP_SO_PATH@ 
+LoadFile @LIBHTP_SO_PATH@ 
 LoadModule ironbee_module @APACHE_HTTPD_MOD_IRONBEE_SO@ 
 
 <IfModule ironbee_module>

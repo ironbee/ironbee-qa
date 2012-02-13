@@ -110,7 +110,7 @@ def parse_apache_httpd_vars(options):
     if tmp_apache_httpd_dict.has_key('@LIBHTP_SO_PATH@'):
         options.apache_httpd_vars['@LIBHTP_SO_PATH@'] =  tmp_apache_httpd_dict['@LIBHTP_SO_PATH@']
     else:
-        options.apache_httpd_vars['@LIB_HTP_SO_PATH@'] = "/usr/local/lib/libhtp.so"
+        options.apache_httpd_vars['@LIBHTP_SO_PATH@'] = "/usr/local/lib/libhtp.so"
 
     #IronBee HTTPD Module
     if tmp_apache_httpd_dict.has_key('@APACHE_HTTPD_MOD_IRONBEE_SO@'):
