@@ -136,6 +136,10 @@ def encode_find_and_replace(options,payload):
     return newpayload
 
 def cmd_wrapper(options,cmd,sudo):
+    if options.vgmemcheck:
+        cmd = "ulimit -c unlimited; valgrind --leak-check=full --track-origins=yes --log-file=vgmemcheck.%s --trace-children=yes --num-callers=40 --show-reachable=yes %s" % (time.time(),cmd)
+    else:
+        cmd = "ulimit -c unlimited; %s" % (cmd)
     if sudo:
         cmd = "/usr/bin/sudo %s" % (cmd)
     options.log.info("running command and waiting for it to finish %s" % (cmd))
@@ -144,11 +148,17 @@ def cmd_wrapper(options,cmd,sudo):
     return (p.returncode, stdout, stderr)
 
 def cmd_wrapper_detatched(options,cmd,sudo):
+    if options.vgmemcheck:
+        cmd = "ulimit -c unlimited; valgrind --leak-check=full --track-origins=yes --log-file=vgmemcheck.%s --trace-children=yes --num-callers=40 --show-reachable=yes %s" % (time.time(),cmd)
+    else:
+        cmd = "ulimit -c unlimited; %s" % (cmd)
+
     if sudo:
         cmd = "/usr/bin/sudo %s" % (cmd)
     options.log.info("running detached command %s" % (cmd))
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
     return
+
 
 def inflate_data(options,compressed_data):
     try:

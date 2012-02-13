@@ -39,6 +39,8 @@ if __name__ == "__main__":
     parser.add_option("--host", dest="host", default="127.0.0.1",type="string", help="host we will be testing defaults to 127.0.0.1")
     #port on host to connect to
     parser.add_option("--port", dest="port", default=9931, type="int", help="port on the host we will be testing defaults to 9931")
+    #Valgrind memcheck
+    parser.add_option("--vgmemcheck",dest="vgmemcheck",action="store_true",default=False, help="If we are starting a local command like ibcli or httpd this will wrap the command in valgrind memcheck")
     #Start Apache HTTPD
     parser.add_option("--local-apache-httpd", dest="local_apache_httpd",action="store_true", default=False, help="If this option is specified it will start a local apache server using the ip address and port specified with --host --port options defaults to 127.0.0.1:9931")
     parser.add_option("--apache-httpd-vars", dest="apache_httpd_var_string",default="@CWD@:%s,@IRONBEE_TESTS_DIR@:%s/tests,@IRONBEE_CONF_TEMPLATE@:%s/apache_httpd_server_root/conf/ironbee.conf.in,@APACHE_HTTPD_CONF_TEMPLATE@:%s/apache_httpd_server_root/conf/httpd.conf.in,@IRONBEE_SERVERROOT_DIR@:%s/apache_httpd_server_root,@IRONBEE_LOGS_DIR@:%s/apache_httpd_server_root/logs,@IRONBEE_DOCROOT_DIR@:%s/apache_httpd_server_root/htdocs,@IRONBEE_COREDUMP_DIR@:%s/apache_httpd_server_root/tmp" % (os.getcwd(),os.getcwd(),os.getcwd(),os.getcwd(),os.getcwd(),os.getcwd(),os.getcwd(),os.getcwd()), type="string", help="List of variable replacements for use in conjunction with --local-apache-httpd. Defautls are @CWD@:%s,@IRONBEE_TESTS_DIR@:%s/tests,@IRONBEE_CONF_TEMPLATE@:%s/apache_httpd_server_root/conf/ironbee.conf.in,@APACHE_HTTPD_CONF_TEMPLATE@:%s/apache_httpd_server_root/conf/httpd.conf.in,@IRONBEE_SERVERROOT_DIR@:%s/apache_httpd_server_root,@IRONBEE_LOGS_DIR@:%s/apache_httpd_server_root/logs,@APXS_LIBEXECDIR@:/usr/lib/apache2/modules,@IRONBEE_DOCROOT_DIR@:%s/apache_httpd_server_root/htdocs,@IRONBEE_COREDUMP_DIR@:%s/apache_httpd_server_root/tmp" % (os.getcwd(),os.getcwd(),os.getcwd(),os.getcwd(),os.getcwd(),os.getcwd(),os.getcwd(),os.getcwd()))
@@ -350,7 +352,7 @@ if __name__ == "__main__":
                                  f.write(stream['response_list'][i])
                                  f.close()
 
-                                 (returncode, stdout, stderr) = cmd_wrapper(options, "ulimit -c unlimited; %s --conf %s --request=tmp.request.raw --response=tmp.response.raw --local-ip=%s --local-port=%s --remote-ip=%s --remote-port=%s " % (options.ibcli_bin, options.ibcli_conf, stream['dst'], stream['dport'], stream['src'], stream['sport']), False)
+                                 (returncode, stdout, stderr) = cmd_wrapper(options, "%s --conf %s --request=tmp.request.raw --response=tmp.response.raw --local-ip=%s --local-port=%s --remote-ip=%s --remote-port=%s " % (options.ibcli_bin, options.ibcli_conf, stream['dst'], stream['dport'], stream['src'], stream['sport']), False)
                                  options.log.debug(stderr)
                                  core_dump = check_for_core_dumps(options,'%s/core*' % (os.getcwd()))
                                  if core_dump != None:

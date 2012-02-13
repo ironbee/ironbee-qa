@@ -291,9 +291,12 @@ def apache_httpd_start(options):
     parse_apache_httpd_vars(options)
     parse_ironbee_base_config(options,'%s' % options.apache_httpd_vars['@IRONBEE_CONF_TEMPLATE@'])
     parse_apache_httpd_base_config(options,'%s' % options.apache_httpd_vars['@APACHE_HTTPD_CONF_TEMPLATE@'])
-    cmd = "ulimit -c unlimited; %s -d %s -f %s -c \"Listen %s:%s\" -k start" % (options.apache_httpd_vars['@APACHE_HTTPD_BIN@'],options.apache_httpd_vars['@IRONBEE_SERVERROOT_DIR@'],options.apache_httpd_vars['@APACHE_HTTPD_CONF@'],options.host,options.port)
+    cmd = "%s -d %s -f %s -c \"Listen %s:%s\" -k start" % (options.apache_httpd_vars['@APACHE_HTTPD_BIN@'],options.apache_httpd_vars['@IRONBEE_SERVERROOT_DIR@'],options.apache_httpd_vars['@APACHE_HTTPD_CONF@'],options.host,options.port)
     (returncode, stdout, stderr) = cmd_wrapper(options,cmd,False)
-    time.sleep(2)
+    if options.vgmemcheck:
+        time.sleep(30)
+    else:
+        time.sleep(2)
     if returncode != 0:
         options.log.error("failed to start apache exit code:%i stdout:%s stderr:%s" % (returncode,stdout,stderr))
         sys.exit(-1)
@@ -323,18 +326,6 @@ def apache_httpd_stop(options):
     else:
         options.log.error("Could not find apache pid %s to stop it." % (options.apache_httpd_pid))
                           
-def apache_httpd_restart(options):
-    options.log.debug("restarting apache")
-    apache_httpd_stop(options)
-    apache_httpd_start(options)
-
-def apache_httpd_reset_and_restart(options,apache_httpd_var_string):
-    apache_httpd_stop(options)
-    if options.local_apache_httpd:
-       if apache_httpd_var_string != "":
-           options.apache_httpd_var_string = apache_httpd_var_string
-       apache_httpd_start(options)
-       
 def apache_httpd_check_for_core(options):
     if options.apache_httpd_vars.has_key('@IRONBEE_COREDUMP_DIR@'):
         core_file_list = glob.glob('%s/core*' % (options.apache_httpd_vars['@IRONBEE_COREDUMP_DIR@']))
@@ -360,4 +351,18 @@ def apache_httpd_check_for_core(options):
         elif len(core_file_list) > 1:
             options.log.debug('more than one core dump found in %s, please remove old core dumps %s' % (options.apache_httpd_vars['@IRONBEE_COREDUMP_DIR@'],core_file_list))
             return
+
+def apache_httpd_restart(options):
+    apache_httpd_check_for_core(options)
+    options.log.debug("restarting apache")
+    apache_httpd_stop(options)
+    apache_httpd_start(options)
+
+def apache_httpd_reset_and_restart(options,apache_httpd_var_string):
+    apache_httpd_check_for_core(options)
+    apache_httpd_stop(options)
+    if options.local_apache_httpd:
+       if apache_httpd_var_string != "":
+           options.apache_httpd_var_string = apache_httpd_var_string
+       apache_httpd_start(options)
         
