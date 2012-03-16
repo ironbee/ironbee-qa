@@ -32,6 +32,7 @@ try:
 except:
     options.log.debug("Failed to Import scapy are you sure it's installed? bailing...")
     sys.exit(-1)
+from ironbee_test_utils import *
 
 class JudyNovakEvade:
     
@@ -104,7 +105,6 @@ class JudyNovakEvade:
            
     #Judy Novak Description: Send a reset with a bad TCP checksum and then send "malicious" payload.
     def jnovak_send_rst_bad_chksum(self,options,host,port,payload):
-    	from ironbee_test_utils import *
         self.next_seq = 0
         self.my_ack = 0
         self.pkt_list = []
@@ -171,7 +171,6 @@ class JudyNovakEvade:
     #Judy Novak Description: Send a packet with bogus payload and a bad TCP checksum. 
     #Then overlap this segment with part of "malicious" payload.
     def jnovak_send_overlap_bad_chksum(self,options,host,port,payload):
-    	from ironbee_test_utils import *
         self.next_seq = 0
         self.my_ack = 0
         self.pkt_list = []
@@ -234,7 +233,6 @@ class JudyNovakEvade:
     
     #Judy Novak Description: ECN flags set on all segments.
     def jnovak_send_bogus_ecn_flags(self,options,host,port,payload):
-    	from ironbee_test_utils import *
         self.next_seq = 0
         self.my_ack = 0
         self.pkt_list = []
@@ -290,7 +288,6 @@ class JudyNovakEvade:
     
     #Judy Novak Description:  One-byte segments that wrap TCP sequence number in middle of "malicious" payload.
     def jnovak_sequence_wrap(self,options,host,port,payload):
-    	from ironbee_test_utils import *
         self.next_seq = 0
         self.my_ack = 0
         self.pkt_list = []
@@ -351,7 +348,6 @@ class JudyNovakEvade:
     #Judy Novak Description: Send a SYN with bad TCP checksum and TCP Timestamp value of 100.
     #Follow with a SYN with a good TCP checksum and a Timestamp value of 10.  Rest of session uses TS of 10.
     def jnovak_multiple_syns(self,options,host,port,payload):
-    	from ironbee_test_utils import *
         self.next_seq = 0
         self.my_ack = 0
         self.pkt_list = []
@@ -418,7 +414,6 @@ class JudyNovakEvade:
     #Immediately restart it with an ISN 1 more than previous one and send "malicious" payload.  
     #For Linux test, wrote a script to immediately restart netcat for 2nd session since it doesn't have a persistent listen option like Windows.
     def jnovak_rst_syn_again(self,options,host,port,payload):
-    	from ironbee_test_utils import *
         self.next_seq = 0
         self.my_ack = 0
         self.pkt_list = []
@@ -490,7 +485,6 @@ class JudyNovakEvade:
     
     #Judy Novak Description: Send a SYN with PUSH flag set.  Linux and Windows Vista accept this.
     def jnovak_syn_pushflag(self,options,host,port,payload):
-    	from ironbee_test_utils import * 
         self.next_seq = 0
         self.my_ack = 0
         self.pkt_list = []
@@ -547,7 +541,6 @@ class JudyNovakEvade:
     
     #Send a SYN with URG flag set.  Linux and Window Vista accept this.
     def jnovak_syn_urgflag(self,options,host,port,payload):
-    	from ironbee_test_utils import *    
         self.next_seq = 0
         self.my_ack = 0
         self.pkt_list = []
